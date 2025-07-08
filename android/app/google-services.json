@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "44850481187",
+    "project_id": "total-amp-449112-s4",
+    "storage_bucket": "total-amp-449112-s4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:44850481187:android:c00a71c768ba71b08b0996",
+        "android_client_info": {
+          "package_name": "com.example.loyaltyapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "44850481187-vdun0pnaude9or9s8n4va5if5h1s59uf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.loyaltyapp",
+            "certificate_hash": "eef535beb8854e4abbc5aa4794d42d8abb2c4143"
+          }
+        },
+        {
+          "client_id": "44850481187-hene3i0vn9jor8ftrpo36089745hah54.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBEg69ucsP7lKCGGnZky-ujfkuPogLsGJo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "44850481187-f5epgdf4tuji3cjhm47shodb344lpbo4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

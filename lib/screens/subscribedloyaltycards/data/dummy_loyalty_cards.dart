@@ -1,0 +1,78 @@
+import 'package:flutter/material.dart';
+import '../models/loyalty_card_model.dart';
+
+class DummyLoyaltyCards {
+  static List<LoyaltyCardModel> getLoyaltyCards() {
+    return [
+      LoyaltyCardModel(
+        id: '1',
+        name: 'Starbucks',
+        icon: Icons.coffee,
+        imageUrl: 'https://upload.wikimedia.org/wikipedia/en/thumb/d/d3/Starbucks_Corporation_Logo_2011.svg/1200px-Starbucks_Corporation_Logo_2011.svg.png',
+        totalStamps: 10,
+        earnedStamps: 4,
+        backgroundColor: const Color(0xFF006241),
+        secondaryColor: const Color(0xFF1E3932),
+        textColor: Colors.white,
+        stampColor: Colors.white.withOpacity(0.7),
+        stampFillColor: Colors.white,
+      ),
+      LoyaltyCardModel(
+        id: '2',
+        name: 'Jamba Juice',
+        icon: Icons.local_drink,
+        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Jamba_Juice_logo.svg/1200px-Jamba_Juice_logo.svg.png',
+        totalStamps: 8,
+        earnedStamps: 2,
+        description: '8 smoothies = 1 free smoothie',
+        backgroundColor: const Color(0xFFE31837),
+        secondaryColor: const Color(0xFFA11C2C),
+        textColor: Colors.white,
+        stampColor: const Color(0xFFFFFFFF).withOpacity(0.7),
+        stampFillColor: Colors.white,
+      ),
+      LoyaltyCardModel(
+        id: '3',
+        name: 'Panera Bread',
+        icon: Icons.breakfast_dining,
+        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Panera_Bread_Logo.svg/1200px-Panera_Bread_Logo.svg.png',
+        totalStamps: 15,
+        earnedStamps: 8,
+        description: '15 items = 1 free pastry',
+        backgroundColor: const Color(0xFFF2A900),
+        secondaryColor: const Color(0xFFD49600),
+        textColor: Colors.white,
+        stampColor: Colors.white.withOpacity(0.7),
+        stampFillColor: Colors.white,
+      ),
+      LoyaltyCardModel(
+        id: '4',
+        name: 'Baskin Robbins',
+        icon: Icons.icecream,
+        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Baskin-Robbins_logo.svg/1200px-Baskin-Robbins_logo.svg.png',
+        totalStamps: 12,
+        earnedStamps: 5,
+        description: '12 scoops = 1 free scoop',
+        backgroundColor: const Color(0xFFE31837),
+        secondaryColor: const Color(0xFFA11C2C),
+        textColor: Colors.white,
+        stampColor: Colors.white.withOpacity(0.7),
+        stampFillColor: Colors.white,
+      ),
+      LoyaltyCardModel(
+        id: '5',
+        name: 'Domino\'s Pizza',
+        icon: Icons.local_pizza,
+        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Dominos_pizza_logo.svg/1200px-Dominos_pizza_logo.svg.png',
+        totalStamps: 8,
+        earnedStamps: 3,
+        description: '8 pizzas = 1 free pizza',
+        backgroundColor: const Color(0xFF0B4F9E),
+        secondaryColor: const Color(0xFF083B7A),
+        textColor: Colors.white,
+        stampColor: Colors.white.withOpacity(0.7),
+        stampFillColor: Colors.white,
+      ),
+    ];
+  }
+}
