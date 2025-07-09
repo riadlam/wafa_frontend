@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:loyaltyapp/constants/colors.dart';
+import 'package:lottie/lottie.dart';
+import 'package:loyaltyapp/constants/app_colors.dart';
 import 'package:loyaltyapp/constants/routes.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'subscription_pricing_screen.dart';
 
 class SubscriptionSuccessScreen extends StatelessWidget {
@@ -55,24 +57,26 @@ class SubscriptionSuccessScreen extends StatelessWidget {
                   color: Colors.green.shade50,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
-                  Icons.check_circle,
-                  color: Colors.green,
-                  size: 80,
+                child: Lottie.asset(
+                  'assets/animations/categories/check.json',
+                  repeat: false, // Play only once
+                  frameRate: FrameRate(60), // Smoother animation
                 ),
               ),
               const SizedBox(height: 24),
-              
+
               // Title
               Text(
-                isFreeTrial ? 'Free Trial Activated!' : 'Subscription Successful!',
+                isFreeTrial
+                    ? 'Free Trial Activated!'
+                    : 'Subscription Successful!',
                 style: theme.textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: Colors.green,
                 ),
               ),
               const SizedBox(height: 32),
-              
+
               // Plan details card
               Container(
                 width: double.infinity,
@@ -109,30 +113,11 @@ class SubscriptionSuccessScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    ...plan.features.map((feature) => Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4.0),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.check_circle,
-                            color: Colors.grey.shade200,
-                            size: 20,
-                          ),
-                          const SizedBox(width: 12),
-                          Text(
-                            feature,
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: AppColors.textPrimary,
-                            ),
-                          ),
-                        ],
-                      ),
-                    )),
                   ],
                 ),
               ),
               const SizedBox(height: 32),
-              
+
               // Subtitle
               Text(
                 isFreeTrial
@@ -147,7 +132,7 @@ class SubscriptionSuccessScreen extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 32),
-              
+
               // Continue button
               SizedBox(
                 width: double.infinity,

@@ -1,136 +1,37 @@
 import 'package:flutter/material.dart';
-import 'package:loyaltyapp/constants/colors.dart';
+import 'package:loyaltyapp/constants/app_colors.dart';
 import 'package:loyaltyapp/services/subscription_service.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 import 'subscription_success_screen.dart';
-import 'dart:math';
 
 class SubscriptionPricingScreen extends StatefulWidget {
   const SubscriptionPricingScreen({Key? key}) : super(key: key);
 
   @override
-  State<SubscriptionPricingScreen> createState() => _SubscriptionPricingScreenState();
+  State<SubscriptionPricingScreen> createState() =>
+      _SubscriptionPricingScreenState();
 }
 
 class _SubscriptionPricingScreenState extends State<SubscriptionPricingScreen> {
-  int _selectedPlanIndex = 1; // Default to 3 months
-  bool _isYearlyBilling = false;
+  Future<void> _launchWhatsApp() async {
+    const phoneNumber = '+1234567890'; // Replace with your WhatsApp number
+    const message = 'Hello, I have a question about your subscription plans.';
+    final url = 'https://wa.me/$phoneNumber?text=${Uri.encodeFull(message)}';
 
-  final List<SubscriptionPlan> _plans = [
-    SubscriptionPlan(
-      name: '1 Month',
-      price: 14.99,
-      billing: 'billed monthly',
-      isPopular: false,
-      features: [
-        'All Basic Features',
-        'Up to 100 Customers',
-        'Basic Analytics',
-      ],
-    ),
-    SubscriptionPlan(
-      name: '3 Months',
-      price: 12.99,
-      billing: 'billed quarterly',
-      isPopular: true,
-      features: [
-        'Everything in 1 Month',
-        'Up to 500 Customers',
-        'Advanced Analytics',
-        'Priority Support',
-      ],
-    ),
-    SubscriptionPlan(
-      name: '12 Months',
-      price: 9.99,
-      billing: 'billed annually',
-      isPopular: false,
-      features: [
-        'Everything in 3 Months',
-        'Unlimited Customers',
-        'Advanced Analytics',
-        'Priority Support',
-      ],
-      savings: 'Save 33%',
-    ),
-  ];
-
-  final ScrollController _scrollController = ScrollController();
-  final double _scrollAmount = 300.0; // Adjust this value based on your card width
-
-  void _scrollLeft() {
-    _scrollController.animateTo(
-      max(0, _scrollController.offset - _scrollAmount),
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-    );
-  }
-
-  void _scrollRight() {
-    _scrollController.animateTo(
-      min(_scrollController.position.maxScrollExtent, _scrollController.offset + _scrollAmount),
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-    );
+    if (await canLaunchUrlString(url)) {
+      await launchUrlString(url);
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Could not launch WhatsApp')),
+        );
+      }
+    }
   }
 
   @override
   void dispose() {
-    _scrollController.dispose();
     super.dispose();
-  }
-
-  Widget _buildNavigationArrow(IconData icon, VoidCallback onTap) {
-    return Material(
-      color: Colors.white.withOpacity(0.8),
-      shape: const CircleBorder(),
-      elevation: 2,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(20),
-        child: Container(
-          width: 36,
-          height: 36,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: AppColors.primary.withOpacity(0.1),
-          ),
-          child: Icon(
-            icon,
-            size: 20,
-            color: AppColors.primary,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBillingToggle() {
-    return Container(
-      padding: const EdgeInsets.all(4),
-      decoration: BoxDecoration(
-        color: Colors.grey.shade100,
-        borderRadius: BorderRadius.circular(30),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Expanded(
-            child: _BillingOption(
-              label: 'Monthly',
-              isActive: !_isYearlyBilling,
-              onTap: () => setState(() => _isYearlyBilling = false),
-            ),
-          ),
-          Expanded(
-            child: _BillingOption(
-              label: 'Yearly',
-              isActive: _isYearlyBilling,
-              onTap: () => setState(() => _isYearlyBilling = true),
-            ),
-          ),
-        ],
-      ),
-    );
   }
 
   @override
@@ -150,12 +51,15 @@ class _SubscriptionPricingScreenState extends State<SubscriptionPricingScreen> {
                 Row(
                   children: [
                     IconButton(
-                      icon: const Icon(Icons.arrow_back, color: AppColors.primary),
+                      icon: const Icon(
+                        Icons.arrow_back,
+                        color: AppColors.primary,
+                      ),
                       onPressed: () => Navigator.pop(context),
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      'Choose Your Plan',
+                      'Get Started',
                       style: theme.textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: AppColors.textPrimary,
@@ -163,22 +67,22 @@ class _SubscriptionPricingScreenState extends State<SubscriptionPricingScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 40),
 
                 // Header
                 Center(
                   child: Column(
                     children: [
                       Text(
-                        'Start Growing Your Business',
+                        'Start Your Free Trial',
                         style: theme.textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: AppColors.textPrimary,
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 16),
                       Text(
-                        'Choose the plan that fits your business needs',
+                        'Try all features free for 30 days. No credit card required.',
                         style: theme.textTheme.bodyLarge?.copyWith(
                           color: AppColors.textSecondary,
                         ),
@@ -187,244 +91,34 @@ class _SubscriptionPricingScreenState extends State<SubscriptionPricingScreen> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 32),
 
-                // Billing toggle
-                _buildBillingToggle(),
-                if (_isYearlyBilling)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0, bottom: 16.0),
-                    child: Center(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.primary.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Text(
-                          '2 Months Free with Yearly Billing',
-                          style: theme.textTheme.labelLarge?.copyWith(
-                            color: AppColors.primary,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                const SizedBox(height: 16),
-
-                // Plans ListView with navigation arrows
-                Column(
-                  children: [
-                    // Navigation arrows - only show if there's content to scroll
-                    if (_plans.length > 1)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 16.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            // Left arrow (only show if not at the start)
-                            if (_scrollController.hasClients && _scrollController.offset > 0)
-                              _buildNavigationArrow(Icons.arrow_back_ios, _scrollLeft)
-                            else
-                              const SizedBox(width: 40), // Placeholder for layout
-                            
-                            // Right arrow (only show if not at the end)
-                            if (_scrollController.hasClients && 
-                                _scrollController.offset < _scrollController.position.maxScrollExtent)
-                              _buildNavigationArrow(Icons.arrow_forward_ios, _scrollRight)
-                            else
-                              const SizedBox(width: 40), // Placeholder for layout
-                          ],
-                        ),
-                      ),
-                    
-                    // Plans ListView with constrained height
-                    Container(
-                      height: MediaQuery.of(context).size.height * 0.6 ,// 70% of screen height
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: ListView.builder(
-                        controller: _scrollController,
-                        scrollDirection: Axis.horizontal,
-                        padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                        itemCount: _plans.length,
-                        itemExtent: 320, // Fixed width for each card
-                        itemBuilder: (context, index) {
-                          final plan = _plans[index];
-                          final isSelected = _selectedPlanIndex == index;
-                          return GestureDetector(
-                            onTap: () {
-                              setState(() => _selectedPlanIndex = index);
-                            },
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 300),
-                              margin: EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: isSelected ? 0 : 16,
-                              ),
-                              decoration: BoxDecoration(
-                                color: isSelected
-                                  ? AppColors.surface
-                                  : AppColors.background,
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(
-                                  color: isSelected
-                                    ? AppColors.primary
-                                    : Colors.grey.shade300,
-                                  width: isSelected ? 2 : 1,
-                                ),
-                                boxShadow: isSelected
-                                  ? [
-                                      BoxShadow(
-                                        color: AppColors.primary.withOpacity(0.1),
-                                        blurRadius: 15,
-                                        offset: const Offset(0, 5),
-                                      ),
-                                    ]
-                                  : null,
-                              ),
-                              padding: const EdgeInsets.all(24),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  if (plan.isPopular)
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 12,
-                                        vertical: 4,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: AppColors.primary.withOpacity(0.1),
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      child: Text(
-                                        'MOST POPULAR',
-                                        style: theme.textTheme.labelSmall?.copyWith(
-                                          color: AppColors.primary,
-                                          fontWeight: FontWeight.bold,
-                                          letterSpacing: 0.5,
-                                        ),
-                                      ),
-                                    ),
-                                  const SizedBox(height: 16),
-                                  Text(
-                                    plan.name,
-                                    style: theme.textTheme.titleLarge?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColors.textPrimary,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  RichText(
-                                    text: TextSpan(
-                                      text: '\$${plan.price.toStringAsFixed(2)}',
-                                      style: theme.textTheme.headlineMedium?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        color: AppColors.primary,
-                                      ),
-                                      children: [
-                                        TextSpan(
-                                          text: ' /mo',
-                                          style: theme.textTheme.titleMedium?.copyWith(
-                                            color: AppColors.textSecondary,
-                                            fontWeight: FontWeight.normal,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  if (plan.savings != null) ...{
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      plan.savings!,
-                                      style: theme.textTheme.bodySmall?.copyWith(
-                                        color: AppColors.success,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  },
-                                  const SizedBox(height: 16),
-                                  Text(
-                                    plan.billing,
-                                    style: theme.textTheme.bodySmall?.copyWith(
-                                      color: AppColors.textSecondary,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 24),
-                                  ...plan.features.map((feature) => Padding(
-                                        padding: const EdgeInsets.only(bottom: 12.0),
-                                        child: Row(
-                                          children: [
-                                            Icon(
-                                              Icons.check_circle,
-                                              color: AppColors.primary,
-                                              size: 20,
-                                            ),
-                                            const SizedBox(width: 12),
-                                            Text(
-                                              feature,
-                                              style: theme.textTheme.bodyMedium?.copyWith(
-                                                color: AppColors.textPrimary,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      )),
-                                  const SizedBox(height: 16),
-                                  ConstrainedBox(
-                                    constraints: const BoxConstraints(
-                                      minHeight: 56,
-                                      minWidth: 200, // Fixed minimum width
-                                    ),
-                                    child: FilledButton(
-                                      onPressed: () {
-                                        // Handle subscription
-                                        _handleSubscribe(plan);
-                                      },
-                                      style: FilledButton.styleFrom(
-                                        minimumSize: const Size(200, 56), // Fixed size
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(12),
-                                        ),
-                                        backgroundColor: isSelected
-                                          ? AppColors.primary
-                                          : Colors.grey.shade100,
-                                        foregroundColor: isSelected
-                                            ? Colors.white
-                                            : AppColors.textPrimary,
-                                      ),
-                                      child: Text(
-                                        'Get Started',
-                                        style: theme.textTheme.titleMedium?.copyWith(
-                                          fontWeight: FontWeight.bold,
-                                          color: isSelected
-                                              ? Colors.white
-                                              : AppColors.textPrimary,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                    
-                  ],
-                ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 48),
 
                 // Free trial button
+                ElevatedButton(
+                  onPressed: _handleFreeTrial,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    minimumSize: const Size(double.infinity, 56),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 0,
+                  ),
+                  child: Text(
+                    'Start 30-Day Free Trial',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                // Contact us button
                 OutlinedButton(
-                  onPressed: () {
-                    _handleFreeTrial();
-                  },
+                  onPressed: _launchWhatsApp,
                   style: OutlinedButton.styleFrom(
                     minimumSize: const Size(double.infinity, 56),
                     shape: RoundedRectangleBorder(
@@ -432,15 +126,33 @@ class _SubscriptionPricingScreenState extends State<SubscriptionPricingScreen> {
                     ),
                     side: BorderSide(color: AppColors.primary, width: 1.5),
                   ),
-                  child: Text(
-                    'Start 30-Day Free Trial',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Image.network(
+                        'https://web.whatsapp.com/favicon.ico',
+                        width: 24,
+                        height: 24,
+                        errorBuilder: (context, error, stackTrace) => 
+                            const Icon(Icons.chat, color: Colors.green, size: 24),
+                      ),
+                      const SizedBox(width: 8),
+                      const Flexible(
+                        child: Text(
+                          'Contact Us on WhatsApp',
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: Colors.green,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 16),
+
+                const SizedBox(height: 24),
 
                 // Security info
                 Row(
@@ -453,7 +165,7 @@ class _SubscriptionPricingScreenState extends State<SubscriptionPricingScreen> {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      'Secure payment. Cancel anytime.',
+                      'Secure signup. No credit card required.',
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: AppColors.textSecondary,
                       ),
@@ -468,29 +180,13 @@ class _SubscriptionPricingScreenState extends State<SubscriptionPricingScreen> {
     );
   }
 
-  void _handleSubscribe(SubscriptionPlan plan) {
-    // Handle subscription logic here
-    // For now, navigate to success screen
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => SubscriptionSuccessScreen(
-          plan: plan,
-          isFreeTrial: false,
-        ),
-      ),
-    );
-  }
-
   Future<void> _handleFreeTrial() async {
     // Show loading dialog
     if (!context.mounted) return;
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => const Center(
-        child: CircularProgressIndicator(),
-      ),
+      builder: (context) => const Center(child: CircularProgressIndicator()),
     );
 
     try {
@@ -502,29 +198,31 @@ class _SubscriptionPricingScreenState extends State<SubscriptionPricingScreen> {
 
       if (response['success'] == true) {
         final userData = response['data']['user'];
-        
+
         if (context.mounted) {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => SubscriptionSuccessScreen(
-                plan: SubscriptionPlan(
-                  name: 'Free Trial',
-                  price: 0,
-                  billing: 'for 30 days',
-                  isPopular: false,
-                  features: [
-                    'All Pro Features',
-                    'Up to 500 Customers',
-                    'Advanced Analytics',
-                    'Priority Support',
-                  ],
-                ),
-                isFreeTrial: true,
-                trialEndsAt: userData['trial_ends_at'] != null 
-                    ? DateTime.parse(userData['trial_ends_at'])
-                    : null,
-              ),
+              builder:
+                  (context) => SubscriptionSuccessScreen(
+                    plan: SubscriptionPlan(
+                      name: 'Free Trial',
+                      price: 0,
+                      billing: 'for 30 days',
+                      isPopular: false,
+                      features: [
+                        'All Pro Features',
+                        'Up to 500 Customers',
+                        'Advanced Analytics',
+                        'Priority Support',
+                      ],
+                    ),
+                    isFreeTrial: true,
+                    trialEndsAt:
+                        userData['trial_ends_at'] != null
+                            ? DateTime.parse(userData['trial_ends_at'])
+                            : null,
+                  ),
             ),
           );
         }
@@ -532,7 +230,9 @@ class _SubscriptionPricingScreenState extends State<SubscriptionPricingScreen> {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(response['error'] ?? 'Failed to activate free trial'),
+              content: Text(
+                response['error'] ?? 'Failed to activate free trial',
+              ),
               backgroundColor: Colors.red,
             ),
           );
@@ -549,40 +249,6 @@ class _SubscriptionPricingScreenState extends State<SubscriptionPricingScreen> {
         );
       }
     }
-  }
-}
-
-class _BillingOption extends StatelessWidget {
-  final String label;
-  final bool isActive;
-  final VoidCallback onTap;
-
-  const _BillingOption({
-    required this.label,
-    required this.isActive,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-        decoration: BoxDecoration(
-          color: isActive ? AppColors.primary : Colors.transparent,
-          borderRadius: BorderRadius.circular(26),
-        ),
-        child: Text(
-          label,
-          textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                color: isActive ? Colors.white : AppColors.textSecondary,
-                fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-              ),
-        ),
-      ),
-    );
   }
 }
 

@@ -36,12 +36,12 @@ class CardPreview extends StatelessWidget {
     final hasLogoFile = logoFile != null && logoFile!.path.isNotEmpty;
     final hasTempImage = tempImagePath != null && tempImagePath!.isNotEmpty;
     final hasImage = hasLogoFile || hasTempImage;
-    
+
     // Calculate half of total stamps (rounded down)
     final halfStamps = totalStamps ~/ 2;
     // Use provided earnedStamps if available, otherwise use half of total
     final effectiveEarnedStamps = earnedStamps ?? halfStamps;
-    
+
     // Create a temporary LoyaltyCardModel for preview
     final card = _createCardModel(
       name: shopName.isNotEmpty ? shopName : 'Your Shop Name',
@@ -49,12 +49,13 @@ class CardPreview extends StatelessWidget {
       earnedStamps: effectiveEarnedStamps,
       color: color,
       // For local files, we need to use the file:// scheme
-      imageUrl: hasLogoFile 
-          ? 'file://${logoFile!.path}'
-          : (hasTempImage ? tempImagePath : null),
+      imageUrl:
+          hasLogoFile
+              ? 'file://${logoFile!.path}'
+              : (hasTempImage ? tempImagePath : null),
       categoryId: categoryId,
     );
-    
+
     debugPrint('Card image URL: ${card.imageUrl}');
 
     return LoyaltyCardItem(
@@ -72,11 +73,13 @@ class CardPreview extends StatelessWidget {
       case 2: // Example for another category
         return LucideIcons.sprayCan;
       case 3:
-        return Icons.restaurant;
+        return LucideIcons.scissors;
       case 4:
-        return Icons.local_cafe;
+        return LucideIcons.ruler;
       case 5:
-        return Icons.shopping_bag;
+        return LucideIcons.cupSoda;
+      case 6:
+        return LucideIcons.sandwich;
       default:
         return Icons.store; // Default icon
     }
@@ -92,7 +95,7 @@ class CardPreview extends StatelessWidget {
   }) {
     // Use category-based icon if no image is provided
     final icon = imageUrl == null ? _getCategoryIcon(categoryId) : null;
-    
+
     return LoyaltyCardModel(
       id: 'preview',
       name: name,
@@ -119,7 +122,7 @@ class LoyaltyProgramForm extends StatefulWidget {
   final ValueNotifier<File?> logoImage;
   final bool isSubmitting;
   final int? selectedCategoryId;
-  
+
   const LoyaltyProgramForm({
     super.key,
     required this.onPrevious,
@@ -146,7 +149,7 @@ class _LoyaltyProgramFormState extends State<LoyaltyProgramForm> {
   final ImagePicker _picker = ImagePicker();
   final ScrollController _scrollController = ScrollController();
   final FocusNode _shopNameFocusNode = FocusNode();
-  
+
   @override
   void initState() {
     super.initState();
@@ -155,7 +158,7 @@ class _LoyaltyProgramFormState extends State<LoyaltyProgramForm> {
     _stampsController = widget.stampsController;
     _selectedColor = widget.selectedColor;
     _logoImage = widget.logoImage;
-    
+
     // Add listener to focus node to scroll to top when focused
     _shopNameFocusNode.addListener(() {
       if (_shopNameFocusNode.hasFocus) {
@@ -185,7 +188,7 @@ class _LoyaltyProgramFormState extends State<LoyaltyProgramForm> {
 
   Future<void> _showColorPicker(BuildContext context) async {
     Color tempColor = _selectedColor.value;
-    
+
     await showDialog(
       context: context,
       builder: (BuildContext ctx) {
@@ -228,8 +231,9 @@ class _LoyaltyProgramFormState extends State<LoyaltyProgramForm> {
     return ValueListenableBuilder<Color>(
       valueListenable: _selectedColor,
       builder: (context, currentColor, _) {
-        final hexCode = '#${currentColor.value.toRadixString(16).substring(2).toUpperCase()}';
-        
+        final hexCode =
+            '#${currentColor.value.toRadixString(16).substring(2).toUpperCase()}';
+
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -245,7 +249,10 @@ class _LoyaltyProgramFormState extends State<LoyaltyProgramForm> {
             GestureDetector(
               onTap: () => _showColorPicker(context),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 10,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
@@ -337,9 +344,10 @@ class _LoyaltyProgramFormState extends State<LoyaltyProgramForm> {
                 valueListenable: _logoImage,
                 builder: (context, logoFile, _) {
                   return CardPreview(
-                    shopName: _shopNameController.text.isNotEmpty 
-                        ? _shopNameController.text 
-                        : 'Your Business',
+                    shopName:
+                        _shopNameController.text.isNotEmpty
+                            ? _shopNameController.text
+                            : 'Your Business',
                     logoFile: logoFile,
                     color: color,
                     totalStamps: int.tryParse(_stampsController.text) ?? 8,
@@ -350,10 +358,10 @@ class _LoyaltyProgramFormState extends State<LoyaltyProgramForm> {
             },
           ),
           const SizedBox(height: 32),
-          
+
           // Form Section
           const SizedBox(height: 16),
-          
+
           // Logo Upload
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -375,10 +383,7 @@ class _LoyaltyProgramFormState extends State<LoyaltyProgramForm> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: Colors.grey[200]!,
-                      width: 1.5,
-                    ),
+                    border: Border.all(color: Colors.grey[200]!, width: 1.5),
                   ),
                   child: Column(
                     children: [
@@ -397,29 +402,34 @@ class _LoyaltyProgramFormState extends State<LoyaltyProgramForm> {
                                 style: BorderStyle.values[1],
                               ),
                             ),
-                            child: file != null
-                                ? ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: Image.file(file, fit: BoxFit.cover),
-                                  )
-                                : Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.add_photo_alternate_outlined,
-                                        size: 28,
-                                        color: Colors.grey[400],
+                            child:
+                                file != null
+                                    ? ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: Image.file(
+                                        file,
+                                        fit: BoxFit.cover,
                                       ),
-                                      const SizedBox(height: 8),
-                                      Text(
-                                        'Add Logo',
-                                        style: GoogleFonts.inter(
-                                          fontSize: 12,
-                                          color: Colors.grey[600],
+                                    )
+                                    : Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.add_photo_alternate_outlined,
+                                          size: 28,
+                                          color: Colors.grey[400],
                                         ),
-                                      ),
-                                    ],
-                                  ),
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          'Add Logo',
+                                          style: GoogleFonts.inter(
+                                            fontSize: 12,
+                                            color: Colors.grey[600],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                           );
                         },
                       ),
@@ -430,7 +440,7 @@ class _LoyaltyProgramFormState extends State<LoyaltyProgramForm> {
             ],
           ),
           const SizedBox(height: 20),
-          
+
           // Shop Name Field
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -481,13 +491,17 @@ class _LoyaltyProgramFormState extends State<LoyaltyProgramForm> {
                     horizontal: 16,
                     vertical: 14,
                   ),
-                  prefixIcon: const Icon(Icons.store_outlined, size: 20, color: Colors.grey),
+                  prefixIcon: const Icon(
+                    Icons.store_outlined,
+                    size: 20,
+                    color: Colors.grey,
+                  ),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 20),
-          
+
           // Description Field
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -544,7 +558,7 @@ class _LoyaltyProgramFormState extends State<LoyaltyProgramForm> {
             ],
           ),
           const SizedBox(height: 20),
-          
+
           // Stamps & Color Section
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -564,9 +578,10 @@ class _LoyaltyProgramFormState extends State<LoyaltyProgramForm> {
                     ),
                     const SizedBox(height: 8),
                     DropdownButtonFormField<int>(
-                      value: _stampsController.text.isNotEmpty 
-                          ? int.tryParse(_stampsController.text) ?? 8
-                          : 8,
+                      value:
+                          _stampsController.text.isNotEmpty
+                              ? int.tryParse(_stampsController.text) ?? 8
+                              : 8,
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: Colors.white,
@@ -595,20 +610,31 @@ class _LoyaltyProgramFormState extends State<LoyaltyProgramForm> {
                           horizontal: 16,
                           vertical: 8,
                         ),
-                        prefixIcon: const Icon(Icons.confirmation_number_outlined, size: 20, color: Colors.grey),
+                        prefixIcon: const Icon(
+                          Icons.confirmation_number_outlined,
+                          size: 20,
+                          color: Colors.grey,
+                        ),
                       ),
                       style: GoogleFonts.inter(
                         fontSize: 15,
                         color: const Color(0xFF1E293B),
                       ),
-                      icon: const Icon(Icons.arrow_drop_down, color: Colors.grey),
+                      icon: const Icon(
+                        Icons.arrow_drop_down,
+                        color: Colors.grey,
+                      ),
                       isExpanded: true,
-                      items: List.generate(20, (index) => index + 1).map<DropdownMenuItem<int>>((int value) {
-                        return DropdownMenuItem<int>(
-                          value: value,
-                          child: Text('$value'),
-                        );
-                      }).toList(),
+                      items:
+                          List.generate(
+                            20,
+                            (index) => index + 1,
+                          ).map<DropdownMenuItem<int>>((int value) {
+                            return DropdownMenuItem<int>(
+                              value: value,
+                              child: Text('$value'),
+                            );
+                          }).toList(),
                       onChanged: (int? newValue) {
                         if (newValue != null) {
                           setState(() {
@@ -626,60 +652,68 @@ class _LoyaltyProgramFormState extends State<LoyaltyProgramForm> {
             ],
           ),
           const SizedBox(height: 50),
-          
-          // Action Buttons
-         Container(
-  padding: const EdgeInsets.all(16),
-  decoration: BoxDecoration(
-    color: Colors.white,
-    boxShadow: [
-      BoxShadow(
-        color: Colors.grey.withOpacity(0.3),
-        blurRadius: 3,
-        offset: const Offset(0, -2),
-      ),
-    ],
-  ),
-  child: Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-      ElevatedButton(
-        onPressed: widget.onPrevious,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.grey[200],
-          foregroundColor: Colors.black87,
-          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-        ),
-        child: const Text('Back'),
-      ),
-      ElevatedButton(
-        onPressed: widget.isSubmitting ? null : widget.onSubmit,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Theme.of(context).primaryColor,
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-        ),
-        child: widget.isSubmitting
-            ? const SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                  strokeWidth: 2,
-                ),
-              )
-            : const Text('Save & Continue'),
-      ),
-    ],
-  ),
-)
 
+          // Action Buttons
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.3),
+                  blurRadius: 3,
+                  offset: const Offset(0, -2),
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ElevatedButton(
+                  onPressed: widget.onPrevious,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.grey[200],
+                    foregroundColor: Colors.black87,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 32,
+                      vertical: 12,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: const Text('Back'),
+                ),
+                ElevatedButton(
+                  onPressed: widget.isSubmitting ? null : widget.onSubmit,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).primaryColor,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 32,
+                      vertical: 12,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child:
+                      widget.isSubmitting
+                          ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.white,
+                              ),
+                              strokeWidth: 2,
+                            ),
+                          )
+                          : const Text('Save & Continue'),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
