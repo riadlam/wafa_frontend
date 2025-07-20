@@ -60,38 +60,41 @@ class _SplashScreenState extends State<SplashScreen>
 
       final router = GoRouter.of(context);
       if (authState.isLoggedIn) {
-        // Get the JWT token
-        final jwtToken = await authService.getJwtToken();
-        if (jwtToken == null) {
-          throw Exception('No JWT token found');
-        }
+        try {
+          // Get the JWT token
+          final jwtToken = await authService.getJwtToken();
+          if (jwtToken == null) {
+            throw Exception('No JWT token found');
+          }
 
-        // Fetch user info from the API
-        debugPrint('🔍 Fetching user info from API...');
-        final userInfo = await authService.getUserInfoFromBackend(jwtToken);
-        final role = userInfo['role'] ?? 'user';
-        debugPrint('👤 User role from API: $role');
+          // Fetch user info from the API
+          debugPrint('🔍 Fetching user info from API...');
+          final userInfo = await authService.getUserInfoFromBackend(jwtToken);
+          final role = userInfo['role']?.toString().toLowerCase() ?? 'user';
+          debugPrint('👤 User role from API: $role');
 
-        // Check registration phase first for all users
-        final prefs = await SharedPreferences.getInstance();
-        final isRegistrationPhase = prefs.getBool('registration_phase') ?? false;
+          // Check registration phase first for all users
+          final prefs = await SharedPreferences.getInstance();
+          final isRegistrationPhase = prefs.getBool('registration_phase') ?? false;
 
-        if (isRegistrationPhase) {
-          debugPrint(
-            '🔄 User is in registration phase, navigating to shop owner setup',
-          );
-          router.go(Routes.userTypeSelection);
-        } else {
+          if (isRegistrationPhase) {
+            debugPrint('🔄 User is in registration phase, navigating to shop owner setup');
+            router.go(Routes.userTypeSelection);
+            return;
+          }
+
           // If not in registration phase, navigate based on role
           if (role == 'shop_owner') {
-            debugPrint(
-              '🏪 User is a shop owner, navigating to admin dashboard',
-            );
+            debugPrint('🏪 User is a shop owner, navigating to admin dashboard');
             router.go(Routes.adminDashboard);
           } else {
             debugPrint('🏠 User is a regular user, navigating to home');
             router.go(Routes.home);
           }
+        } catch (e) {
+          debugPrint('❌ Error during role-based navigation: $e');
+          // Fallback to home if there's an error
+          router.go(Routes.home);
         }
       } else {
         debugPrint('🔒 User is not logged in, navigating to login');

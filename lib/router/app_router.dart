@@ -131,10 +131,10 @@ class AppRouter {
         return null;
       }
 
-      // If we're on login/splash but already logged in, go to home
-      if ((isSplashRoute || isLoginRoute) && isLoggedIn) {
-        debugPrint('🏠 Router: Already logged in, redirecting to home');
-        return Routes.home;
+      // Let splash screen handle the redirection based on role
+      if (isLoginRoute && isLoggedIn) {
+        debugPrint('🔄 Router: Already logged in, letting splash handle redirection');
+        return Routes.splash;  // Go back to splash to handle role-based routing
       }
 
       debugPrint('✅ Router: No redirect needed for ${state.uri.path}');

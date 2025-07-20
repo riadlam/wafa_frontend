@@ -19,10 +19,74 @@
     "phone": "الهاتف",
     "update": "تحديث الملف الشخصي"
   },
+  "qr_scanner": {
+    "scan_qr_code": "مسح رمز الاستجابة السريعة",
+    "no_camera_permission": "يطلب إذن الكاميرا لمسح رموز الاستجابة السريعة",
+    "grant_permission": "منح الإذن",
+    "processing": "جاري المعالجة...",
+    "camera_error": "خطأ في الكاميرا: {error}",
+    "scan_failed": "فشل مسح رمز الاستجابة السريعة. يرجى المحاولة مرة أخرى.",
+    "invalid_qr": "رمز استجابة سريعة غير صالح. يرجى مسح رمز برنامج ولاء صالح.",
+    "scan_success": "تم مسح رمز الاستجابة السريعة بنجاح!"
+  },
   "common": {
     "save": "حفظ",
     "cancel": "إلغاء",
     "loading": "جاري التحميل...",
-    "error": "حدث خطأ"
+    "error": "حدث خطأ",
+    "retry": "إعادة المحاولة",
+    "success": "تم بنجاح",
+    "error_title": "خطأ",
+    "ok": "موافق",
+    "yes": "نعم",
+    "no": "لا"
+  },
+  "auth": {
+    "login": "تسجيل الدخول",
+    "signup": "إنشاء حساب",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "forgot_password": "نسيت كلمة المرور؟",
+    "no_account": "ليس لديك حساب؟ ",
+    "have_account": "لديك حساب بالفعل؟ "
+  },
+  "validation": {
+    "required": "هذا الحقل مطلوب",
+    "invalid_email": "الرجاء إدخال بريد إلكتروني صحيح",
+    "password_too_short": "يجب أن تكون كلمة المرور 6 أحرف على الأقل",
+    "passwords_dont_match": "كلمتا المرور غير متطابقتين"
+  },
+  "qr_scanner": {
+    "scan_qr_code": "مسح رمز الاستجابة السريعة",
+    "no_camera_permission": "يجب السماح بالوصول إلى الكاميرا لمسح الرمز",
+    "grant_permission": "منح الإذن",
+    "scan_failed": "فشل مسح الرمز",
+    "processing": "جاري المعالجة..."
+  },
+  "settings": {
+    "title": "الإعدادات",
+    "language": "اللغة",
+    "theme": "المظهر",
+    "notifications": "الإشعارات",
+    "privacy_policy": "سياسة الخصوصية",
+    "terms_of_service": "شروط الخدمة",
+    "about": "حول التطبيق"
+  },
+  "dashboard_profile": {
+    "account": "الحساب",
+    "preferences": "التفضيلات",
+    "support": "الدعم",
+    "personal_information": "المعلومات الشخصية",
+    "update_personal_details": "قم بتحديث معلوماتك الشخصية",
+    "language": "اللغة",
+    "help_center": "مركز المساعدة",
+    "help_center_subtitle": "ابحث عن إجابات للأسئلة الشائعة",
+    "contact_support": "اتصل بالدعم",
+    "contact_support_subtitle": "تواصل مع فريق الدعم لدينا",
+    "logout": "تسجيل الخروج",
+    "logout_confirmation": "هل أنت متأكد أنك تريد تسجيل الخروج؟",
+    "cancel": "إلغاء",
+    "confirm_logout": "تسجيل الخروج",
+    "app_version": "وفاء v1.0.0"
   }
 }

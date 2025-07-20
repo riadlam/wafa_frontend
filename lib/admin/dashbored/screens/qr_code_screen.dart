@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'dart:ui' as ui;
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../../services/qr_scan_service.dart';
 import '../../../../models/qr_scan/qr_scan_models.dart';
 
@@ -210,17 +212,15 @@ class _QrCodeScreenState extends State<QrCodeScreen>
       barrierDismissible: false,
       builder:
           (BuildContext context) => AlertDialog(
-            title: const Text('Camera Permission Required'),
-            content: const Text(
-              'Camera permission is required to scan QR codes. Please enable it in app settings.',
-            ),
+            title: Text('qr_scanner.camera_permission_required'.tr()),
+            content: Text('qr_scanner.camera_permission_message'.tr()),
             actions: <Widget>[
               TextButton(
-                child: const Text('Cancel'),
+                child: Text('qr_scanner.cancel'.tr()),
                 onPressed: () => Navigator.of(context).pop(),
               ),
               TextButton(
-                child: const Text('Open Settings'),
+                child: Text('qr_scanner.open_settings'.tr()),
                 onPressed: () {
                   openAppSettings();
                   Navigator.of(context).pop();
@@ -240,7 +240,7 @@ class _QrCodeScreenState extends State<QrCodeScreen>
             content: Text(message),
             actions: <Widget>[
               TextButton(
-                child: const Text('OK'),
+                child: Text('qr_scanner.close'.tr()),
                 onPressed: () => Navigator.of(context).pop(),
               ),
             ],
@@ -252,8 +252,8 @@ class _QrCodeScreenState extends State<QrCodeScreen>
     if (!QRScanService.isValidEmail(email)) {
       if (mounted) {
         _showErrorDialog(
-          'Invalid Email',
-          'The scanned QR code does not contain a valid email address.',
+          'qr_scanner.invalid_email'.tr(),
+          'qr_scanner.invalid_email_message'.tr(),
         );
         setState(() => _isProcessing = false);
       }
@@ -270,13 +270,16 @@ class _QrCodeScreenState extends State<QrCodeScreen>
       }
     } on QRScanException catch (e) {
       if (mounted) {
-        _showErrorDialog('Error', e.message);
+        _showErrorDialog('qr_scanner.error'.tr(), e.message);
         // Remove the code if there was an error to allow rescanning
         _processedCodes.remove(email);
       }
     } catch (e) {
       if (mounted) {
-        _showErrorDialog('Error', 'An unexpected error occurred');
+        _showErrorDialog(
+          'qr_scanner.error'.tr(),
+          'qr_scanner.scan_failed'.tr(),
+        );
       }
     } finally {
       if (mounted) {
@@ -310,9 +313,9 @@ class _QrCodeScreenState extends State<QrCodeScreen>
         final loyaltyCard = userCard.loyaltyCard;
 
         return AlertDialog(
-          title: const Text(
-            'Stamp Added Successfully!',
-            style: TextStyle(color: Colors.green),
+          title: Text(
+            'qr_scanner.stamp_added_title'.tr(),
+            style: const TextStyle(color: Colors.green),
           ),
           content: SingleChildScrollView(
             child: Column(
@@ -340,17 +343,17 @@ class _QrCodeScreenState extends State<QrCodeScreen>
                 const SizedBox(height: 16),
                 const Divider(),
                 _buildInfoRow(
-                  'Current Stamps',
+                  'qr_scanner.current_stamps'.tr(),
                   '${userCard.activeStamps} / ${loyaltyCard.totalStamps}',
                 ),
-                _buildInfoRow('Status', response.message),
+                _buildInfoRow('qr_scanner.status'.tr(), response.message),
               ],
             ),
           ),
           actions: <Widget>[
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Close'),
+              child: Text('qr_scanner.close'.tr()),
             ),
           ],
         );
@@ -371,12 +374,15 @@ class _QrCodeScreenState extends State<QrCodeScreen>
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
-          const SizedBox(width: 8.0), // Add some spacing between label and value
+          const SizedBox(
+            width: 8.0,
+          ), // Add some spacing between label and value
           Expanded(
             child: Text(
               value,
               maxLines: 2, // Limit to 2 lines
-              overflow: TextOverflow.ellipsis, // Show ellipsis if text is too long
+              overflow:
+                  TextOverflow.ellipsis, // Show ellipsis if text is too long
             ),
           ),
         ],
@@ -415,7 +421,15 @@ class _QrCodeScreenState extends State<QrCodeScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('QR Code Scanner'), centerTitle: true),
+      appBar: AppBar(
+        title: Text('qr_scanner.scan_qr_code'.tr()),
+        actions: [
+          IconButton(
+            icon: Icon(_isFlashOn ? Icons.flash_on : Icons.flash_off),
+            onPressed: _toggleFlash,
+          ),
+        ],
+      ),
       body: Column(
         children: <Widget>[
           Expanded(
@@ -426,21 +440,23 @@ class _QrCodeScreenState extends State<QrCodeScreen>
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(
-                            Icons.camera_alt,
-                            size: 64,
-                            color: Colors.grey,
-                          ),
-                          const SizedBox(height: 16),
-                          const Text(
-                            'Camera permission is required to scan QR codes',
-                            textAlign: TextAlign.center,
-                          ),
+                          Text('qr_scanner.no_camera_permission'.tr()),
                           const SizedBox(height: 16),
                           ElevatedButton(
-                            onPressed: _checkCameraPermission,
-                            child: const Text('Grant Permission'),
+                            onPressed: _requestCameraPermission,
+                            child: Text('qr_scanner.grant_permission'.tr()),
                           ),
+                        ],
+                      ),
+                    )
+                    : _isProcessing
+                    ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const CircularProgressIndicator(),
+                          const SizedBox(height: 16),
+                          Text('qr_scanner.processing'.tr()),
                         ],
                       ),
                     )
@@ -460,15 +476,18 @@ class _QrCodeScreenState extends State<QrCodeScreen>
                           },
                         ),
                         if (_isScanning)
-                          const Center(
+                          Center(
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                SpinKitCircle(color: Colors.white, size: 50.0),
-                                SizedBox(height: 16),
+                                const SpinKitCircle(
+                                  color: Colors.white,
+                                  size: 50.0,
+                                ),
+                                const SizedBox(height: 16),
                                 Text(
-                                  'Scanning for email QR codes...',
-                                  style: TextStyle(
+                                  'qr_scanner.scanning_message'.tr(),
+                                  style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
@@ -506,8 +525,8 @@ class _QrCodeScreenState extends State<QrCodeScreen>
                             color: Theme.of(context).primaryColor,
                           ),
                           const SizedBox(height: 20),
-                          const Text(
-                            'Tap the button below to start scanning',
+                          Text(
+                            'qr_scanner.tap_to_scan'.tr(),
                             style: TextStyle(fontSize: 18),
                             textAlign: TextAlign.center,
                           ),
@@ -519,7 +538,7 @@ class _QrCodeScreenState extends State<QrCodeScreen>
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Text(
-                'Last scanned: ${_lastScannedCode}',
+                '${'qr_scanner.last_scanned'.tr()}: ${_lastScannedCode}',
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,

@@ -70,3 +70,4 @@ flutter:
   assets:
     - assets/images/
     - assets/animations/categories/check.json
+    - assets/l10n/

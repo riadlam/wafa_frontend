@@ -11,6 +11,9 @@ import 'package:loyaltyapp/services/auth_service.dart';
 import 'package:loyaltyapp/hive_models/hive_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/foundation.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'firebase_options.dart';
 import 'dart:developer' as developer;
 
@@ -43,35 +46,53 @@ void main() async {
     final userProvider = UserProvider();
     final loyaltyCardProvider = LoyaltyCardProvider();
     
+    // Load saved language preference
+    final prefs = await SharedPreferences.getInstance();
+    final savedLanguageCode = prefs.getString('language_code') ?? 'en';
+    
+    // Initialize EasyLocalization with saved language
+    WidgetsFlutterBinding.ensureInitialized();
+    await EasyLocalization.ensureInitialized();
+    
     runApp(
-      MultiProvider(
-        providers: [
-          // Provide AuthService instance
-          Provider<AuthService>.value(
-            value: authService,
-          ),
-          // Auth state provider
-          ChangeNotifierProvider(
-            create: (_) => AuthStateProvider(authService),
-            lazy: false, // Initialize immediately
-          ),
-          // User provider
-          ChangeNotifierProvider<UserProvider>(
-            create: (_) => userProvider,
-            lazy: false, // Initialize immediately
-          ),
-          // Loyalty card provider
-          ChangeNotifierProvider<LoyaltyCardProvider>(
-            create: (_) => loyaltyCardProvider,
-            lazy: false, // Initialize immediately
-          ),
-          // WebSocket provider
-          ChangeNotifierProvider<WebSocketProvider>(
-            create: (_) => WebSocketProvider(),
-            lazy: false, // Initialize immediately
-          ),
+      EasyLocalization(
+        supportedLocales: const [
+          Locale('en'),
+          Locale('fr'),
+          Locale('ar'),
         ],
-        child: const MyApp(),
+        path: 'assets/l10n', // Path to translation files
+        fallbackLocale: const Locale('en', ''), // Fallback locale
+        startLocale: Locale(savedLanguageCode), // Default locale
+        child: MultiProvider(
+          providers: [
+            // Provide AuthService instance
+            Provider<AuthService>.value(
+              value: authService,
+            ),
+            // Auth state provider
+            ChangeNotifierProvider(
+              create: (_) => AuthStateProvider(authService),
+              lazy: false, // Initialize immediately
+            ),
+            // User provider
+            ChangeNotifierProvider<UserProvider>(
+              create: (_) => userProvider,
+              lazy: false, // Initialize immediately
+            ),
+            // Loyalty card provider
+            ChangeNotifierProvider<LoyaltyCardProvider>(
+              create: (_) => loyaltyCardProvider,
+              lazy: false, // Initialize immediately
+            ),
+            // WebSocket provider
+            ChangeNotifierProvider<WebSocketProvider>(
+              create: (_) => WebSocketProvider(),
+              lazy: false, // Initialize immediately
+            ),
+          ],
+          child: const MyApp(),
+        ),
       ),
     );
     
@@ -110,21 +131,13 @@ class MyApp extends StatelessWidget {
       developer.log('🏗️ Building MyApp');
     }
     
-    // Listen to auth state changes
-    final authState = context.watch<AuthStateProvider>();
-    
-    // Handle user provider initialization in a post-frame callback
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final userProvider = context.read<UserProvider>();
-      if (authState.isLoggedIn && !userProvider.isInitialized) {
-        userProvider.initialize();
-      }
-    });
-    
     return MaterialApp.router(
-      title: 'Fidelity App',
+      routerConfig: AppRouter.router,
+      title: 'appTitle'.tr(),
       debugShowCheckedModeBanner: false,
-      routerConfig: appRouter,
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
       theme: ThemeData(
         colorScheme: ColorScheme.light(
           primary: AppColors.primary,

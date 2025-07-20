@@ -5,13 +5,28 @@ import 'package:loyaltyapp/constants/app_colors.dart';
 import 'package:provider/provider.dart';
 import 'package:loyaltyapp/constants/routes.dart';
 import 'package:loyaltyapp/providers/auth_state_provider.dart';
-import 'package:loyaltyapp/admin/dashbored/widgets/loyalty_card_display.dart';
 import 'package:loyaltyapp/providers/user_provider.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:loyaltyapp/admin/dashbored/widgets/language_selector_sheet.dart';
 
 class DashboardProfile extends StatelessWidget {
   const DashboardProfile({super.key});
   
   // Get user initials from name
+  String _getCurrentLanguageName(BuildContext context) {
+    final locale = context.locale.languageCode;
+    switch (locale) {
+      case 'en':
+        return 'English';
+      case 'fr':
+        return 'Français';
+      case 'ar':
+        return 'العربية';
+      default:
+        return 'English';
+    }
+  }
+
   String _getInitials(String? name) {
     if (name == null || name.isEmpty) return 'U';
     final nameParts = name.split(' ');
@@ -164,33 +179,42 @@ class DashboardProfile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Account Section
-                  _buildSectionTitle('Account'),
+                  _buildSectionTitle('dashboard_profile.account'.tr()),
                   const SizedBox(height: 16),
                   _buildProfileCard(
                     children: [
                       _buildProfileItem(
                         icon: Icons.person_outline,
-                        title: 'Personal Information',
-                        subtitle: 'Update your personal details',
+                        title: 'dashboard_profile.personal_information'.tr(),
+                        subtitle: 'dashboard_profile.update_personal_details'.tr(),
                         onTap: () {},
                       ),
-                    
                     ],
                   ),
                   
                   const SizedBox(height: 24),
                   
                   // Preferences Section
-                  _buildSectionTitle('Preferences'),
+                  _buildSectionTitle('dashboard_profile.preferences'.tr()),
                   const SizedBox(height: 16),
                   _buildProfileCard(
                     children: [
-                      _buildProfileItem(
-                        icon: Icons.language_outlined,
-                        title: 'Language',
-                        subtitle: 'English (US)',
-                        trailing: const Icon(Icons.chevron_right, color: _lightTextColor),
-                        onTap: () {},
+                      _buildToggleItem(
+                        'dashboard_profile.language'.tr(),
+                        Icons.language,
+                        () {
+                          showModalBottomSheet(
+                            context: context,
+                            builder: (context) => const LanguageSelectorSheet(),
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                            ),
+                          );
+                        },
+                        trailing: Text(
+                          _getCurrentLanguageName(context),
+                          style: const TextStyle(color: Colors.white70, fontSize: 14),
+                        ),
                       ),
                     ],
                   ),
@@ -198,20 +222,20 @@ class DashboardProfile extends StatelessWidget {
                   const SizedBox(height: 24),
                   
                   // Support Section
-                  _buildSectionTitle('Support'),
+                  _buildSectionTitle('dashboard_profile.support'.tr()),
                   const SizedBox(height: 16),
                   _buildProfileCard(
                     children: [
                       _buildProfileItem(
                         icon: Icons.help_outline,
-                        title: 'Help Center',
-                        subtitle: 'Find answers to common questions',
+                        title: 'dashboard_profile.help_center'.tr(),
+                        subtitle: 'dashboard_profile.help_center_subtitle'.tr(),
                         onTap: () {},
                       ),
                       _buildProfileItem(
                         icon: Icons.email_outlined,
-                        title: 'Contact Support',
-                        subtitle: 'Get in touch with our support team',
+                        title: 'dashboard_profile.contact_support'.tr(),
+                        subtitle: 'dashboard_profile.contact_support_subtitle'.tr(),
                         onTap: () {},
                       ),
                     ],
@@ -229,19 +253,19 @@ class DashboardProfile extends StatelessWidget {
                           context: context,
                           builder: (BuildContext context) {
                             return AlertDialog(
-                              title: const Text('Logout'),
-                              content: const Text('Are you sure you want to log out?'),
+                              title: Text('dashboard_profile.logout'.tr()),
+                              content: Text('dashboard_profile.logout_confirmation'.tr()),
                               actions: [
                                 TextButton(
                                   onPressed: () => Navigator.of(context).pop(false),
-                                  child: const Text('CANCEL'),
+                                  child: Text('dashboard_profile.cancel'.tr()),
                                 ),
                                 TextButton(
                                   onPressed: () => Navigator.of(context).pop(true),
                                   style: TextButton.styleFrom(
                                     foregroundColor: Colors.red,
                                   ),
-                                  child: const Text('LOGOUT'),
+                                  child: Text('dashboard_profile.confirm_logout'.tr()),
                                 ),
                               ],
                             );
@@ -312,7 +336,7 @@ class DashboardProfile extends StatelessWidget {
                         elevation: 0,
                       ),
                       child: Text(
-                        'Logout',
+                        'dashboard_profile.logout'.tr(),
                         style: GoogleFonts.inter(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -326,7 +350,7 @@ class DashboardProfile extends StatelessWidget {
                   // App Version
                   Center(
                     child: Text(
-                      'Waffa v1.0.0',
+                      'dashboard_profile.app_version'.tr(),
                       style: GoogleFonts.inter(
                         fontSize: 12,
                         color: _lightTextColor.withOpacity(0.7),
@@ -413,13 +437,9 @@ class DashboardProfile extends StatelessWidget {
     );
   }
   
-  Widget _buildToggleItem({
-    required IconData icon,
-    required String title,
-    required bool value,
-    required ValueChanged<bool> onChanged,
-  }) {
+  Widget _buildToggleItem(String title, IconData icon, VoidCallback onTap, {Widget? trailing}) {
     return ListTile(
+      onTap: onTap,
       leading: Container(
         width: 40,
         height: 40,
@@ -437,11 +457,7 @@ class DashboardProfile extends StatelessWidget {
           color: _darkTextColor,
         ),
       ),
-      trailing: Switch.adaptive(
-        value: value,
-        onChanged: onChanged,
-        activeColor: _primaryColor,
-      ),
+      trailing: trailing ?? const Icon(Icons.arrow_forward_ios, size: 16, color: _lightTextColor),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
     );
   }

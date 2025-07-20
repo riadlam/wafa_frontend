@@ -19,10 +19,83 @@
     "phone": "Phone",
     "update": "Update Profile"
   },
+  "qr_scanner": {
+    "camera_permission_required": "Camera Permission Required",
+    "camera_permission_message": "Camera permission is required to scan QR codes. Please enable it in app settings.",
+    "cancel": "Cancel",
+    "open_settings": "Open Settings",
+    "camera_error": "Camera Error",
+    "scanning_message": "Scanning for email QR codes...",
+    "tap_to_scan": "Tap the button below to start scanning",
+    "stamp_added_title": "Stamp Added Successfully!",
+    "current_stamps": "Current Stamps",
+    "status": "Status",
+    "close": "Close",
+    "last_scanned": "Last scanned",
+    "invalid_email": "Invalid Email",
+    "invalid_email_message": "The scanned QR code does not contain a valid email address.",
+    "error": "Error",
+    "scan_qr_code": "Scan QR Code",
+    "no_camera_permission": "Camera permission is required to scan QR codes",
+    "grant_permission": "Grant Permission",
+    "processing": "Processing...",
+    "camera_error_message": "Camera Error: {error}",
+    "scan_failed": "Failed to scan QR code. Please try again.",
+    "invalid_qr": "Invalid QR code. Please scan a valid loyalty QR code.",
+    "scan_success": "QR code scanned successfully!"
+  },
   "common": {
     "save": "Save",
     "cancel": "Cancel",
     "loading": "Loading...",
-    "error": "An error occurred"
+    "error": "An error occurred",
+    "retry": "Retry",
+    "success": "Success",
+    "error_title": "Error",
+    "ok": "OK",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "auth": {
+    "login": "Login",
+    "signup": "Sign Up",
+    "email": "Email",
+    "password": "Password",
+    "forgot_password": "Forgot Password?",
+    "no_account": "Don't have an account? ",
+    "have_account": "Already have an account? "
+  },
+  "validation": {
+    "required": "This field is required",
+    "invalid_email": "Please enter a valid email",
+    "password_too_short": "Password must be at least 6 characters",
+    "passwords_dont_match": "Passwords don't match"
+  },
+
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "theme": "Theme",
+    "notifications": "Notifications",
+    "privacy_policy": "Privacy Policy",
+    "terms_of_service": "Terms of Service",
+    "about": "About"
+  },
+  "dashboard_profile": {
+    "account": "Account",
+    "preferences": "Preferences",
+    "support": "Support",
+    "personal_information": "Personal Information",
+    "update_personal_details": "Update your personal details",
+    "language": "Language",
+    "help_center": "Help Center",
+    "help_center_subtitle": "Find answers to common questions",
+    "contact_support": "Contact Support",
+    "contact_support_subtitle": "Get in touch with our support team",
+    "logout": "Logout",
+    "logout_confirmation": "Are you sure you want to log out?",
+    "cancel": "CANCEL",
+    "confirm_logout": "LOGOUT",
+    "app_version": "Waffa v1.0.0"
   }
 }

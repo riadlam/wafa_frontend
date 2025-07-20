@@ -3,7 +3,7 @@
   "dashboard": {
     "profile": "Profil",
     "settings": "Paramètres",
-    "logout": "Se déconnecter",
+    "logout": "Déconnexion",
     "scanQr": "Scanner le QR Code",
     "language": "Langue"
   },
@@ -19,10 +19,83 @@
     "phone": "Téléphone",
     "update": "Mettre à jour le profil"
   },
+  "qr_scanner": {
+    "camera_permission_required": "Autorisation de la caméra requise",
+    "camera_permission_message": "L'autorisation de la caméra est nécessaire pour scanner les codes QR. Veuillez l'activer dans les paramètres de l'application.",
+    "cancel": "Annuler",
+    "open_settings": "Ouvrir les paramètres",
+    "camera_error": "Erreur de la caméra",
+    "scanning_message": "Recherche de codes QR par e-mail...",
+    "tap_to_scan": "Appuyez sur le bouton ci-dessous pour commencer à numériser",
+    "stamp_added_title": "Tampon ajouté avec succès !",
+    "current_stamps": "Timbres actuels",
+    "status": "Statut",
+    "close": "Fermer",
+    "last_scanned": "Dernier scan",
+    "invalid_email": "E-mail invalide",
+    "invalid_email_message": "Le code QR scanné ne contient pas d'adresse e-mail valide.",
+    "error": "Erreur",
+    "scan_qr_code": "Scanner le code QR",
+    "no_camera_permission": "L'autorisation de la caméra est requise pour scanner les codes QR",
+    "grant_permission": "Accorder l'autorisation",
+    "processing": "Traitement en cours...",
+    "camera_error_message": "Erreur de la caméra : {error}",
+    "scan_failed": "Échec du scan du code QR. Veuillez réessayer.",
+    "invalid_qr": "Code QR invalide. Veuillez scanner un code de fidélité valide.",
+    "scan_success": "Code QR scanné avec succès !"
+  },
   "common": {
     "save": "Enregistrer",
     "cancel": "Annuler",
     "loading": "Chargement...",
-    "error": "Une erreur est survenue"
+    "error": "Une erreur est survenue",
+    "retry": "Réessayer",
+    "success": "Succès",
+    "error_title": "Erreur",
+    "ok": "OK",
+    "yes": "Oui",
+    "no": "Non"
+  },
+  "auth": {
+    "login": "Connexion",
+    "signup": "S'inscrire",
+    "email": "Email",
+    "password": "Mot de passe",
+    "forgot_password": "Mot de passe oublié ?",
+    "no_account": "Vous n'avez pas de compte ? ",
+    "have_account": "Vous avez déjà un compte ? "
+  },
+  "validation": {
+    "required": "Ce champ est obligatoire",
+    "invalid_email": "Veuillez entrer un email valide",
+    "password_too_short": "Le mot de passe doit contenir au moins 6 caractères",
+    "passwords_dont_match": "Les mots de passe ne correspondent pas"
+  },
+
+  "settings": {
+    "title": "Paramètres",
+    "language": "Langue",
+    "theme": "Thème",
+    "notifications": "Notifications",
+    "privacy_policy": "Politique de confidentialité",
+    "terms_of_service": "Conditions d'utilisation",
+    "about": "À propos"
+  },
+  "dashboard_profile": {
+    "account": "Compte",
+    "preferences": "Préférences",
+    "support": "Support",
+    "personal_information": "Informations personnelles",
+    "update_personal_details": "Mettez à jour vos informations personnelles",
+    "language": "Langue",
+    "help_center": "Centre d'aide",
+    "help_center_subtitle": "Trouvez des réponses aux questions courantes",
+    "contact_support": "Contacter le support",
+    "contact_support_subtitle": "Contactez notre équipe d'assistance",
+    "logout": "Déconnexion",
+    "logout_confirmation": "Êtes-vous sûr de vouloir vous déconnecter ?",
+    "cancel": "ANNULER",
+    "confirm_logout": "SE DÉCONNECTER",
+    "app_version": "Waffa v1.0.0"
   }
 }
