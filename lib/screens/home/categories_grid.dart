@@ -102,7 +102,7 @@ class _CategoriesGridState extends State<CategoriesGrid> {
       return imagePath;
     }
     // Otherwise, construct the full URL
-    return 'http://192.168.1.8:8000${imagePath.startsWith('/') ? '' : '/'}$imagePath';
+    return 'http://192.168.1.15:8000${imagePath.startsWith('/') ? '' : '/'}$imagePath';
   }
 
   // Get appearance data for a category by index

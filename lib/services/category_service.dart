@@ -149,7 +149,7 @@ class CategoryService {
     try {
       final token = await AuthService().getJwtToken();
       final response = await http.get(
-        Uri.parse('http://192.168.1.8:8000/api/locations/filter?wilaya=$wilaya&category_id=$categoryId'),
+        Uri.parse('http://192.168.1.15:8000/api/locations/filter?wilaya=$wilaya&category_id=$categoryId'),
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',

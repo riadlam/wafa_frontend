@@ -1,6 +1,6 @@
 class ApiEndpoints {
   // Base URL
-  static const String baseUrl = 'http://192.168.1.8:8000';
+  static const String baseUrl = 'http://192.168.1.15:8000';
   static const String apiPrefix = '/api';
 
   // Auth endpoints

@@ -1,21 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:loyaltyapp/admin/dashbored/widgets/loyalty_stats.dart';
-import 'package:loyaltyapp/admin/dashbored/widgets/recent_stamps_table.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:loyaltyapp/constants/app_colors.dart';
-import 'dashbored_profile.dart';
-import 'dart:io';
-import 'package:loyaltyapp/constants/app_colors.dart' as custom_colors;
 import 'package:loyaltyapp/services/stamp_service.dart';
-import 'package:loyaltyapp/widgets/curved_notched_bar_painter.dart';
-import 'package:loyaltyapp/admin/dashbored/widgets/loyalty_card_display.dart';
-import 'package:loyaltyapp/admin/dashbored/widgets/edit_loyalty_card_sheet.dart';
 import 'package:loyaltyapp/providers/loyalty_card_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:lucide_icons/lucide_icons.dart';
+import 'dart:io';
+import 'dashbored_profile.dart';
 import 'screens/qr_code_screen.dart';
 import 'package:loyaltyapp/scalaton_loader/dashboard_skeleton.dart';
-import 'package:lucide_icons/lucide_icons.dart';
-// AppColors is now imported from colors.dart with a prefix
+import 'package:loyaltyapp/admin/dashbored/widgets/loyalty_card_display.dart';
+import 'package:loyaltyapp/admin/dashbored/widgets/edit_loyalty_card_sheet.dart';
+import 'package:loyaltyapp/constants/app_colors.dart' as custom_colors;
+import 'package:loyaltyapp/admin/dashbored/widgets/recent_stamps_table.dart';
 
 class DashboardHome extends StatefulWidget {
   const DashboardHome({super.key});
@@ -74,10 +71,11 @@ class _DashboardHomeState extends State<DashboardHome> {
                       ],
                     ),
                   ),
-                  
+
                   // Invisible spacer for the center button area
-                  const SizedBox(width: 70), // Matches the width of the floating button
-                  
+                  const SizedBox(
+                    width: 70,
+                  ), // Matches the width of the floating button
                   // Right side items
                   Expanded(
                     child: Row(
@@ -95,10 +93,10 @@ class _DashboardHomeState extends State<DashboardHome> {
                 ],
               ),
             ),
-            
+
             // Floating QR Code Button (centered)
             Positioned(
-              bottom:30 , // Position at the top of the Stack
+              bottom: 30, // Position at the top of the Stack
               child: GestureDetector(
                 onTap: () => setState(() => _currentIndex = 1),
                 child: Container(
@@ -109,15 +107,14 @@ class _DashboardHomeState extends State<DashboardHome> {
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: custom_colors.AppColors.primary.withOpacity(0.25),
+                        color: custom_colors.AppColors.primary.withOpacity(
+                          0.25,
+                        ),
                         blurRadius: 16,
                         offset: const Offset(0, 4),
                       ),
                     ],
-                    border: Border.all(
-                      color: Colors.white,
-                      width: 1,
-                    ),
+                    border: Border.all(color: Colors.white, width: 1),
                   ),
                   child: const Center(
                     child: Icon(
@@ -161,7 +158,8 @@ class _NavBarIcon extends StatelessWidget {
           children: [
             Icon(
               selected ? selectedIcon : icon,
-              color: selected ? custom_colors.AppColors.primary : Colors.black54,
+              color:
+                  selected ? custom_colors.AppColors.primary : Colors.black54,
               size: 28,
             ),
             if (selected)
@@ -327,7 +325,10 @@ class _DashboardContentState extends State<_DashboardContent> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [const Color.fromARGB(255, 224, 191, 191).withOpacity(0.05), Colors.white],
+            colors: [
+              const Color.fromARGB(255, 224, 191, 191).withOpacity(0.05),
+              Colors.white,
+            ],
           ),
         ),
         child: SingleChildScrollView(
@@ -689,13 +690,69 @@ class _DashboardContentState extends State<_DashboardContent> {
               infoText:
                   'Number of rewards redeemed by your customers this month.',
             ),
-            _buildStatCard(
-              'Shop Rate',
-              '4.5',
-              Icons.star_border_rounded,
-              const Color(0xFF8B5CF6),
-              infoText:
-                  'Your shop\'s average rating based on customer feedback.',
+            // Pending Payment card
+            FutureBuilder<dynamic>(
+              future: _stampService.getPendingPayment(),
+              builder: (context, snapshot) {
+                // Show loading state
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return _buildStatCard(
+                    'Pending Payment',
+                    '...',
+                    Icons.payments_outlined,
+                    const Color(0xFF8B5CF6),
+                  );
+                }
+
+                // Show error state
+                if (snapshot.hasError) {
+                  return _buildStatCard(
+                    'Pending Payment',
+                    'Error',
+                    Icons.error_outline,
+                    Colors.red[300]!,
+                    infoText: 'Failed to load pending payment',
+                  );
+                }
+
+                // Show data
+                final amount =
+                    snapshot.hasData
+                        ? snapshot.data!.data.totalAmountDue.toStringAsFixed(0)
+                        : '0';
+                final pendingAmount = Row(
+                  mainAxisSize: MainAxisSize.min,
+                  textBaseline: TextBaseline.alphabetic,
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  children: [
+                    Text(
+                      amount,
+                      style: GoogleFonts.poppins(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w700,
+                        color: const Color(0xFF1E293B),
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      'DA',
+                      style: GoogleFonts.poppins(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFF1E293B).withOpacity(0.8),
+                      ),
+                    ),
+                  ],
+                );
+
+                return _buildStatCard(
+                  'Pending Payment',
+                  pendingAmount,
+                  Icons.payments_outlined,
+                  const Color(0xFF8B5CF6),
+                  infoText: 'Total amount pending from unredeemed rewards.',
+                );
+              },
             ),
           ],
         );
@@ -705,7 +762,7 @@ class _DashboardContentState extends State<_DashboardContent> {
 
   Widget _buildStatCard(
     String title,
-    String value,
+    dynamic value, // Can be String or Widget
     IconData icon,
     Color color, {
     String? infoText,
@@ -826,22 +883,30 @@ class _DashboardContentState extends State<_DashboardContent> {
                   ],
                 ),
                 const Spacer(),
-                Text(
-                  value,
-                  style: GoogleFonts.poppins(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w700,
-                    color: const Color(0xFF1E293B),
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  title,
-                  style: GoogleFonts.inter(
-                    fontSize: 12,
-                    color: const Color(0xFF64748B),
-                    fontWeight: FontWeight.w500,
-                  ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (value is Widget)
+                      value
+                    else
+                      Text(
+                        value,
+                        style: GoogleFonts.poppins(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w700,
+                          color: const Color(0xFF1E293B),
+                        ),
+                      ),
+                    const SizedBox(height: 4),
+                    Text(
+                      title,
+                      style: GoogleFonts.inter(
+                        fontSize: 12,
+                        color: const Color(0xFF64748B),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -1044,10 +1109,7 @@ class _DashboardContentState extends State<_DashboardContent> {
                 const SizedBox(height: 8),
                 Text(
                   'Our support team is here to help you get the most out of your loyalty program.',
-                  style: GoogleFonts.inter(
-                    color: Colors.black,
-                    fontSize: 12,
-                  ),
+                  style: GoogleFonts.inter(color: Colors.black, fontSize: 12),
                 ),
                 const SizedBox(height: 16),
                 ElevatedButton(
@@ -1055,7 +1117,7 @@ class _DashboardContentState extends State<_DashboardContent> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.black,
                     foregroundColor: Colors.white,
-                    
+
                     padding: const EdgeInsets.symmetric(
                       horizontal: 20,
                       vertical: 10,

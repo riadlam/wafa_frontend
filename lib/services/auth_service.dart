@@ -100,11 +100,15 @@ class AuthService {
         if (user != null) {
           // User is signed in
           try {
-            // Save user info
+            // Get the existing role before saving
+            final currentRole = await userRole;
+            
+            // Save user info with existing role or default to 'user'
             await _saveUserInfo(
               email: user.email ?? '',
               name: user.displayName ?? '',
               photoUrl: user.photoURL ?? '',
+              role: currentRole ?? 'user',
             );
             
             // Get and store the ID token
@@ -175,7 +179,7 @@ class AuthService {
       _logger.i('Exchanging Firebase token for JWT token');
       
       final response = await http.post(
-        Uri.parse('http://192.168.1.8:8000/api/login/firebase'),
+        Uri.parse('http://192.168.1.15:8000/api/login/firebase'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'token': firebaseToken}),
       );
@@ -248,7 +252,7 @@ class AuthService {
       }
 
       final response = await http.post(
-        Uri.parse('http://192.168.1.8:8000/api/mark-as-existed'),
+        Uri.parse('http://192.168.1.15:8000/api/mark-as-existed'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
@@ -331,8 +335,8 @@ class AuthService {
         throw AuthException('User email is required', code: 'missing_email');
       }
       
-      // 5. Get user info from backend (including role)
-      final userInfo = await _getUserInfoFromBackend(jwtToken);
+      // 5. Get additional user info from our backend
+      final userInfo = await getUserInfoFromBackend(jwtToken);
       final userRole = userInfo['role'] as String? ?? 'user';
       
       // 6. Save all user info in a single operation
@@ -488,9 +492,14 @@ class AuthService {
           developer.log('⚠️ Error signing out from Google', 
                       error: e, stackTrace: stackTrace);
         }
+        // Continue with sign out even if Google sign out fails
       }
 
-      // 2. Sign out from Firebase
+      // 2. Clear all user data before signing out from Firebase
+      // This prevents race conditions with auth state listeners
+      await _clearUserData();
+      
+      // 3. Sign out from Firebase
       // This will trigger the auth state change listener
       try {
         await _auth.signOut();
@@ -515,14 +524,14 @@ class AuthService {
   }
   
   // Get user info from backend using JWT token
-  Future<Map<String, dynamic>> _getUserInfoFromBackend(String token) async {
+  Future<Map<String, dynamic>> getUserInfoFromBackend(String token) async {
     try {
       if (kDebugMode) {
         developer.log('🔍 Fetching user info from backend...');
       }
       
       final response = await http.get(
-        Uri.parse('http://192.168.1.8:8000/api/user'),
+        Uri.parse('http://192.168.1.15:8000/api/user'),
         headers: {
           'Authorization': 'Bearer $token',
           'Accept': 'application/json',

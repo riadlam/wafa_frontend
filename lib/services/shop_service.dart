@@ -1,6 +1,7 @@
 import 'package:loyaltyapp/models/shop_model.dart';
 import 'package:loyaltyapp/hive_models/hive_service.dart';
 import 'package:loyaltyapp/services/api_client.dart';
+import 'package:loyaltyapp/models/pending_payment_model.dart';
 
 class ShopService {
   final ApiClient _apiClient = ApiClient();

@@ -12,10 +12,9 @@ class HomeBanner extends StatefulWidget {
 
 class _HomeBannerState extends State<HomeBanner> {
   final List<String> bannerImages = [
-    'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80',
-    'https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80',
-    'https://images.unsplash.com/photo-1607082349566-187342175e2f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80',
-    'https://images.unsplash.com/photo-1607082349531-963b63e3b9e3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80',
+    'https://www.ziggiscoffee.com/uploads/image/sliders/2025-dirty-soda-launch/zig0525_ds_web-banners-01.jpg',
+    'https://images.getbento.com/accounts/8b40ab2d5f609293fe9194dde3f3f9b2/media/images/66516Fresh_Squeezed_Juices.jpg?w=1200&fit=max&auto=compress,format&cs=origin',
+    'https://toptailorsusa.com/cdn/shop/files/Background_pic_2.jpg?v=1699246573&width=3840',
   ];
 
   late PageController _pageController;
@@ -94,19 +93,23 @@ class _HomeBannerState extends State<HomeBanner> {
                         color: Colors.grey[200],
                         child: Center(
                           child: CircularProgressIndicator(
-                            value: loadingProgress.expectedTotalBytes != null
-                                ? loadingProgress.cumulativeBytesLoaded /
-                                    loadingProgress.expectedTotalBytes!
-                                : null,
-                            valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
+                            value:
+                                loadingProgress.expectedTotalBytes != null
+                                    ? loadingProgress.cumulativeBytesLoaded /
+                                        loadingProgress.expectedTotalBytes!
+                                    : null,
+                            valueColor: const AlwaysStoppedAnimation<Color>(
+                              AppColors.primary,
+                            ),
                           ),
                         ),
                       );
                     },
-                    errorBuilder: (context, error, stackTrace) => Container(
-                      color: Colors.grey[200],
-                      child: const Icon(Icons.error, color: Colors.grey),
-                    ),
+                    errorBuilder:
+                        (context, error, stackTrace) => Container(
+                          color: Colors.grey[200],
+                          child: const Icon(Icons.error, color: Colors.grey),
+                        ),
                   );
                 },
               ),
@@ -135,9 +138,10 @@ class _HomeBannerState extends State<HomeBanner> {
                       margin: const EdgeInsets.symmetric(horizontal: 4.0),
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: _currentPage == index
-                            ? AppColors.primary
-                            : Colors.grey[300],
+                        color:
+                            _currentPage == index
+                                ? AppColors.primary
+                                : Colors.grey[300],
                       ),
                     ),
                   );

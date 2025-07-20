@@ -396,7 +396,7 @@ class _ShopDetailsScreenState extends State<ShopDetailsScreen> {
               images: widget.images.map((image) {
                 if (image.startsWith('http')) return image;
                 // Add base URL if it's a relative path
-                final baseUrl = 'http://192.168.1.8:8000';
+                final baseUrl = 'http://192.168.1.15:8000';
                 return '$baseUrl/${image.replaceAll('\\', '/')}';
               }).toList(),
             ),

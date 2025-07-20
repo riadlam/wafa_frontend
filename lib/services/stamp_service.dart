@@ -3,6 +3,7 @@ import 'dart:developer' as developer;
 import 'package:http/http.dart' as http;
 import 'package:loyaltyapp/hive_models/hive_service.dart';
 import 'package:loyaltyapp/models/stamp_activation_model.dart';
+import 'package:loyaltyapp/models/pending_payment_model.dart';
 import 'package:loyaltyapp/services/auth_service.dart';
 
 class PlanInfo {
@@ -26,7 +27,7 @@ class PlanInfo {
 }
 
 class StampService {
-  static const String baseUrl = 'http://192.168.1.8:8000/api';
+  static const String baseUrl = 'http://192.168.1.15:8000/api';
 
   final AuthService _authService = AuthService();
 
@@ -204,6 +205,41 @@ class StampService {
       // Return cached data if available, otherwise return default
       final cachedData = await HiveService.getCachedDashboardRedemptions();
       return cachedData ?? {'total_redemptions': 0};
+    }
+  }
+
+  Future<PendingPaymentResponse> getPendingPayment() async {
+    developer.log('🔄 [StampService] Fetching pending payment');
+    
+    try {
+      final token = await _authService.getJwtToken();
+      final headers = {
+        'Accept': 'application/json',
+      };
+      
+      if (token != null) {
+        headers['Authorization'] = 'Bearer $token';
+      } else {
+        developer.log('⚠️ [StampService] No authentication token found for pending payment');
+      }
+
+      final response = await http.get(
+        Uri.parse('$baseUrl/shop/calculate-amount-due'),
+        headers: headers,
+      );
+
+      developer.log('✅ [StampService] Pending payment response: ${response.statusCode}');
+      
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return PendingPaymentResponse.fromJson(data);
+      } else {
+        developer.log('❌ [StampService] Failed to load pending payment: ${response.statusCode}');
+        throw Exception('Failed to load pending payment');
+      }
+    } catch (e) {
+      developer.log('❌ [StampService] Error in getPendingPayment: $e');
+      rethrow;
     }
   }
 

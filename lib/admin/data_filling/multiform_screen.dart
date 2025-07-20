@@ -7,6 +7,7 @@ import 'package:loyaltyapp/services/auth_service.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:latlong2/latlong.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'business_info_form.dart';
 import 'loyalty_program_form.dart';
 import 'image_category_form_screen.dart';
@@ -134,7 +135,7 @@ class _MultiFormScreenState extends State<MultiFormScreen> {
 
       final request = http.MultipartRequest(
         'POST',
-        Uri.parse('http://192.168.1.8:8000/api/upsert-loyalty-card'),
+        Uri.parse('http://192.168.1.15:8000/api/upsert-loyalty-card'),
       );
 
       final token = await AuthService().getJwtToken();
@@ -225,7 +226,16 @@ class _MultiFormScreenState extends State<MultiFormScreen> {
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
         if (mounted) {
-          context.go(Routes.adminDashboard);
+          // Set registration_phase to false before navigation
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setBool('registration_phase', false);
+          if (kDebugMode) {
+            print('✅ Registration phase completed, setting registration_phase to false');
+          }
+          
+          if (mounted) {
+            context.go(Routes.adminDashboard);
+          }
         }
       } else {
         try {

@@ -141,6 +141,11 @@ class _UserTypeSelectionScreenState extends State<UserTypeSelectionScreen> {
     setState(() => _isLoading = true);
     
     try {
+      // Set registration_phase to false for regular users
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('registration_phase', false);
+      print('✅ Set registration_phase to false in SharedPreferences');
+      
       // First, mark the user as existed in the backend
       try {
         final success = await AuthService().markUserAsExisted();
@@ -306,6 +311,15 @@ class _UserTypeSelectionScreenState extends State<UserTypeSelectionScreen> {
   }
 
   Future<void> _handleShopOwnerSelection() async {
+    // Save registration phase flag
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('registration_phase', true);
+      print('✅ Set registration_phase to true in SharedPreferences');
+    } catch (e) {
+      print('⚠️ Error saving registration_phase: $e');
+    }
+    
     // Check location service status first
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {

@@ -89,7 +89,7 @@ class _SearchScreenState extends State<SearchScreen> {
     if (imagePath.startsWith('http')) {
       return imagePath;
     }
-    return 'http://192.168.1.8:8000${imagePath.startsWith('/') ? '' : '/'}$imagePath';
+    return 'http://192.168.1.15:8000${imagePath.startsWith('/') ? '' : '/'}$imagePath';
   }
 
   @override
@@ -150,13 +150,16 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   void _onSearchChanged(String query) {
+    print('🔍 Search query changed: "$query"');
     // Update the query
     _searchQuery = query.trim();
     
     // Cancel previous timer if it was active
     _debounce?.cancel();
+    print('⏳ Setting up debounce timer');
     
     if (query.isEmpty) {
+      print('ℹ️ Query is empty, clearing results');
       setState(() {
         _hasSearched = false;
         _searchResults.clear();
@@ -166,15 +169,23 @@ class _SearchScreenState extends State<SearchScreen> {
     
     // Set up debounce
     _debounce = Timer(const Duration(milliseconds: 500), () {
+      print('⏰ Debounce timer completed, searching for: "$_searchQuery"');
       if (_searchQuery.isNotEmpty) {
         _searchShops();
+      } else {
+        print('⚠️ Empty query after debounce, not searching');
       }
     });
   }
   
   Future<void> _searchShops([String? query]) async {
     final searchQuery = query ?? _searchQuery;
-    if (searchQuery.isEmpty) return;
+    print('🔍 Starting search for: "$searchQuery"');
+    
+    if (searchQuery.isEmpty) {
+      print('⚠️ Search query is empty, aborting');
+      return;
+    }
     
     setState(() {
       _isSearching = true;
@@ -182,7 +193,9 @@ class _SearchScreenState extends State<SearchScreen> {
     });
     
     try {
+      print('📡 Calling search service...');
       final response = await _searchService.searchShops(searchQuery);
+      print('✅ Search successful, received ${response.data.length} results');
       
       if (mounted) {
         setState(() {
@@ -191,7 +204,10 @@ class _SearchScreenState extends State<SearchScreen> {
           _isSearching = false;
         });
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      print('❌ Search error: $e');
+      print('📜 Stack trace: $stackTrace');
+      
       if (mounted) {
         setState(() {
           _searchError = e.toString().replaceAll('Exception: ', '');
@@ -387,7 +403,8 @@ class _SearchScreenState extends State<SearchScreen> {
     return GestureDetector(
       onTap: () {
         _searchController.text = label;
-        // Trigger search
+        print('🔍 Recent search tapped: "$label"');
+        _searchShops(label); // Trigger search with the selected label
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

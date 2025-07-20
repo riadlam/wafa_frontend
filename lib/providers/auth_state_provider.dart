@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +9,7 @@ import '../services/auth_service.dart';
 final _log = Logger('AuthStateProvider');
 
 class AuthStateProvider with ChangeNotifier {
+  bool _mounted = true;
   final AuthService _authService;
   StreamSubscription<User?>? _authSubscription;
   
@@ -79,26 +79,39 @@ class AuthStateProvider with ChangeNotifier {
   Future<void> signOut() async {
     try {
       _setLoading(true);
+      _log.info('🔒 Starting sign out process');
       
       // Clear location data from SharedPreferences
       try {
         final prefs = await SharedPreferences.getInstance();
         await prefs.remove('user_latitude');
         await prefs.remove('user_longitude');
-        _log.info('Cleared location data from SharedPreferences');
+        _log.info('✅ Cleared location data from SharedPreferences');
       } catch (e) {
-        _log.warning('Failed to clear location data', e);
+        _log.warning('⚠️ Failed to clear location data', e);
         // Don't fail sign out if clearing location fails
       }
       
       // Sign out from auth service
       await _authService.signOut();
+      
+      // Update state in a single operation
       _isLoggedIn = false;
       _error = null;
-      notifyListeners();
+      
+      _log.info('✅ Successfully signed out');
+      
+      // Notify listeners once after all state changes
+      if (_mounted) {
+        notifyListeners();
+      }
+      
     } catch (e, stackTrace) {
-      _log.severe('Error signing out', e, stackTrace);
+      _log.severe('❌ Error during sign out', e, stackTrace);
       _error = e.toString();
+      if (_mounted) {
+        notifyListeners();
+      }
       rethrow;
     } finally {
       _setLoading(false);
@@ -107,6 +120,7 @@ class AuthStateProvider with ChangeNotifier {
   
   @override
   void dispose() {
+    _mounted = false;
     _authSubscription?.cancel();
     _authSubscription = null;
     super.dispose();

@@ -23,26 +23,64 @@ class SearchShopCard extends StatelessWidget {
     
     if (imageData == null) return result;
     
-    // Handle case where imageData is a JSON string array
-    if (imageData is String && imageData.trim().startsWith('[')) {
-      try {
-        // Parse JSON array and extract URLs
-        final List<dynamic> urls = jsonDecode(imageData);
-        for (var url in urls) {
-          if (url is String && url.isNotEmpty) {
-            result.add(_ensureFullUrl(url));
-          }
+    // Handle case where imageData is a List
+    if (imageData is List) {
+      for (var item in imageData) {
+        if (item is String && item.isNotEmpty) {
+          result.add(_ensureFullUrl(item));
+        } else if (item != null) {
+          result.add(_ensureFullUrl(item.toString()));
         }
-      } catch (e) {
-        debugPrint('Error parsing image URLs: $e');
       }
-    } 
-    // Handle case where it's a single URL string
-    else if (imageData is String && imageData.isNotEmpty) {
-      result.add(_ensureFullUrl(imageData));
+      return result;
+    }
+    
+    // Handle case where imageData is a JSON string array
+    if (imageData is String) {
+      if (imageData.trim().startsWith('[')) {
+        try {
+          // Parse JSON array and extract URLs
+          final List<dynamic> urls = jsonDecode(imageData);
+          for (var url in urls) {
+            if (url is String && url.isNotEmpty) {
+              result.add(_ensureFullUrl(url));
+            } else if (url != null) {
+              result.add(_ensureFullUrl(url.toString()));
+            }
+          }
+        } catch (e) {
+          debugPrint('Error parsing image URLs: $e');
+        }
+      } 
+      // Handle case where it's a single URL string
+      else if (imageData.isNotEmpty) {
+        result.add(_ensureFullUrl(imageData));
+      }
     }
     
     return result;
+  }
+  
+  // Parse color from hex string
+  Color _parseColor(String hexColor) {
+    try {
+      hexColor = hexColor.replaceAll('#', '');
+      
+      // Handle 3-digit hex colors
+      if (hexColor.length == 3) {
+        hexColor = '${hexColor[0]}${hexColor[0]}${hexColor[1]}${hexColor[1]}${hexColor[2]}${hexColor[2]}';
+      }
+      
+      // Add full opacity if not present
+      if (hexColor.length == 6) {
+        hexColor = 'FF$hexColor';
+      }
+      
+      return Color(int.parse(hexColor, radix: 16));
+    } catch (e) {
+      debugPrint('Error parsing color: $e');
+      return Colors.blue; // Default color if parsing fails
+    }
   }
   
   // Ensure URL is complete
@@ -50,14 +88,16 @@ class SearchShopCard extends StatelessWidget {
     if (path.startsWith('http')) {
       return path;
     }
-    const baseUrl = 'http://192.168.1.8:8000';
+    const baseUrl = 'http://192.168.1.15:8000';
     return '$baseUrl${path.startsWith('/') ? '' : '/'}$path';
   }
 
   // Convert ShopSearchResult to Shop model for details screen
   Shop _toShopModel() {
     // Process shop images - handle both string and JSON array formats
-    final shopImages = _processImageUrls(shop.image);
+    final List<String> shopImages = shop.images != null && shop.images!.isNotEmpty 
+        ? shop.images!.map((image) => _ensureFullUrl(image)).toList()
+        : [];
     
     // Convert ShopSearchResult's loyalty cards to the expected format
     final loyaltyCards = shop.loyaltyCards.isNotEmpty
@@ -144,21 +184,34 @@ class SearchShopCard extends StatelessWidget {
           }
         }
         
+        // Get the primary color from the first loyalty card if available
+        final primaryColor = shop.loyaltyCards.isNotEmpty && shop.loyaltyCards.first.backgroundColor != null
+            ? _parseColor(shop.loyaltyCards.first.backgroundColor!)
+            : Theme.of(context).primaryColor;
+            
         // Navigate to shop details in the next frame
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (!navigator.mounted) return;
           
           navigator.push(
             CustomPageRoute(
-              child: ShopDetailsScreen(
-                shop: shopModel,
-                shopName: shopModel.name,
-                rating: 4.5, // Default rating
-                location: shopModel.location ?? 'No location',
-                phoneNumber: shopModel.contactInfo ?? 'No contact info',
-                images: shopModel.images ?? [],
-                category: shopModel.category.name,
-                reviewCount: 0,
+              child: Theme(
+                data: Theme.of(context).copyWith(
+                  colorScheme: Theme.of(context).colorScheme.copyWith(
+                    primary: primaryColor,
+                    primaryContainer: primaryColor.withOpacity(0.2),
+                  ),
+                ),
+                child: ShopDetailsScreen(
+                  shop: shopModel,
+                  shopName: shopModel.name,
+                  rating: 4.5, // Default rating
+                  location: shopModel.location ?? 'No location',
+                  phoneNumber: shopModel.contactInfo ?? 'No contact info',
+                  images: shopModel.images ?? [],
+                  category: shopModel.category.name,
+                  reviewCount: 0,
+                ),
               ),
               direction: AxisDirection.right,
             ),
@@ -301,13 +354,13 @@ class SearchShopCard extends StatelessWidget {
       }
     }
     
-    // If no loyalty card logo, try shop image
-    if ((imageUrl == null || imageUrl.isEmpty) && shop.image != null) {
-      final images = _processImageUrls(shop.image!);
+    // If no loyalty card logo, try shop images
+    if ((imageUrl == null || imageUrl.isEmpty) && shop.images != null && shop.images!.isNotEmpty) {
+      final images = _processImageUrls(shop.images!);
       if (images.isNotEmpty) {
         imageUrl = images.first;
       }
-    } 
+    }
     
     // If still no image, try owner avatar
     if ((imageUrl == null || imageUrl.isEmpty) && shop.owner.avatar != null) {

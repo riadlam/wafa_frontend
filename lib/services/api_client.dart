@@ -8,7 +8,7 @@ class ApiClient {
   final Logger _logger = Logger();
   
   // Base URL for your Laravel API
-  static const String baseUrl = 'http://192.168.1.8:8000/api';
+  static const String baseUrl = 'http://192.168.1.15:8000/api';
   
   // Singleton pattern
   factory ApiClient() => _instance;
@@ -43,20 +43,20 @@ class ApiClient {
       final url = '$baseUrl$endpoint';
       final headers = await _getHeaders();
       
-      _logger.i('GET Request: $url');
-      _logger.i('Headers: $headers');
+      // _logger.i('GET Request: $url');
+      // _logger.i('Headers: $headers');
       
       final response = await http.get(
         Uri.parse(url),
         headers: headers,
       );
       
-      _logger.i('Response Status: ${response.statusCode}');
-      _logger.i('Response Body: ${response.body}');
+      // _logger.i('Response Status: ${response.statusCode}');
+      // _logger.i('Response Body: ${response.body}');
       
       return _handleResponse(response);
     } catch (e, stackTrace) {
-      _logger.e('GET request failed', error: e, stackTrace: stackTrace);
+      // _logger.e('GET request failed', error: e, stackTrace: stackTrace);
       rethrow;
     }
   }
@@ -71,7 +71,7 @@ class ApiClient {
       );
       return _handleResponse(response);
     } catch (e) {
-      _logger.e('POST request failed: $e');
+      // _logger.e('POST request failed: $e');
       rethrow;
     }
   }
@@ -86,7 +86,7 @@ class ApiClient {
       );
       return _handleResponse(response);
     } catch (e) {
-      _logger.e('PUT request failed: $e');
+      // _logger.e('PUT request failed: $e');
       rethrow;
     }
   }
@@ -100,7 +100,7 @@ class ApiClient {
       );
       return _handleResponse(response);
     } catch (e) {
-      _logger.e('DELETE request failed: $e');
+      // _logger.e('DELETE request failed: $e');
       rethrow;
     }
   }

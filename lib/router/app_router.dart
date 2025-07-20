@@ -97,6 +97,7 @@ class AppRouter {
       final isLoggedIn = authState.isLoggedIn;
       final isLoginRoute = state.uri.path == Routes.login;
       final isSplashRoute = state.uri.path == Routes.splash;
+      final isLoggingOut = state.extra == 'logging_out';
 
       debugPrint('''
 🔄 Router State Update:
@@ -105,7 +106,14 @@ class AppRouter {
 - isLoading: ${authState.isLoading}
 - isLoginRoute: $isLoginRoute
 - isSplashRoute: $isSplashRoute
+- isLoggingOut: $isLoggingOut
       ''');
+
+      // If we're in the process of logging out, stay on splash
+      if (isLoggingOut && isSplashRoute) {
+        debugPrint('🔐 Router: Currently logging out, staying on splash screen');
+        return null;
+      }
 
       // If auth state is still loading, stay on current route
       if (authState.isLoading) {
@@ -113,20 +121,19 @@ class AppRouter {
         return null;
       }
 
-      // If user is not logged in
+      // If user is not logged in, redirect to login
       if (!isLoggedIn) {
-        // If not on login/splash screen, redirect to login
+        // Only redirect if we're not already on the login or splash route
         if (!isLoginRoute && !isSplashRoute) {
           debugPrint('🔒 Router: Not logged in, redirecting to login');
           return Routes.login;
         }
-        debugPrint('ℹ️ Router: Allowing access to ${state.uri.path} (not logged in)');
         return null;
       }
 
-      // User is logged in
-      if (isSplashRoute || isLoginRoute) {
-        debugPrint('🏠 Router: Logged in, redirecting to home');
+      // If we're on login/splash but already logged in, go to home
+      if ((isSplashRoute || isLoginRoute) && isLoggedIn) {
+        debugPrint('🏠 Router: Already logged in, redirecting to home');
         return Routes.home;
       }
 

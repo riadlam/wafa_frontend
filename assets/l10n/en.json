@@ -1,0 +1,28 @@
+{
+  "appTitle": "Loyalty App",
+  "dashboard": {
+    "profile": "Profile",
+    "settings": "Settings",
+    "logout": "Logout",
+    "scanQr": "Scan QR Code",
+    "language": "Language"
+  },
+  "language": {
+    "english": "English",
+    "french": "French",
+    "arabic": "العربية"
+  },
+  "profile": {
+    "title": "Profile",
+    "email": "Email",
+    "name": "Name",
+    "phone": "Phone",
+    "update": "Update Profile"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "loading": "Loading...",
+    "error": "An error occurred"
+  }
+}

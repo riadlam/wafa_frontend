@@ -1,52 +1,53 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'dart:developer' as developer;
 import 'package:provider/provider.dart';
-import '../providers/auth_state_provider.dart';
+import 'package:go_router/go_router.dart';
 import '../constants/routes.dart';
+import '../providers/auth_state_provider.dart';
 
 class LogoutService {
+  static bool _isLoggingOut = false;
+
   static Future<void> logout(BuildContext context) async {
+    // Prevent multiple simultaneous logout attempts
+    if (_isLoggingOut) {
+      developer.log('⚠️ [LogoutService] Logout already in progress');
+      return;
+    }
+
+    _isLoggingOut = true;
+    developer.log('🔑 [LogoutService] Starting logout process');
+
     try {
-      // Get the auth state provider
-      final authState = Provider.of<AuthStateProvider>(
-        context,
-        listen: false,
-      );
-
-      // Sign out from the auth provider
-      await authState.signOut();
-
-      // Ensure the context is still valid
-      if (!context.mounted) return;
-
-      // Navigate to login screen without any back navigation
+      final authState = Provider.of<AuthStateProvider>(context, listen: false);
       final router = GoRouter.of(context);
       
-      // Use pushReplacement to prevent going back to protected routes
-      if (router.canPop()) {
-        router.pop();
-      }
+      // 1. First navigate to splash screen to prevent any UI glitches
+      developer.log('🔄 [LogoutService] Navigating to splash screen first');
+      router.go(Routes.splash, extra: 'logging_out');
       
-      // Ensure we're at the root before navigating
-      while (router.canPop()) {
-        router.pop();
-      }
+      // 2. Then sign out (this will trigger a rebuild)
+      developer.log('🔒 [LogoutService] Signing out user');
+      await authState.signOut();
       
-      // Navigate to login screen
-      router.go(Routes.login);
+      developer.log('✅ [LogoutService] Logout process completed successfully');
+    } catch (e, stackTrace) {
+      developer.log(
+        '❌ [LogoutService] Error during logout',
+        error: e,
+        stackTrace: stackTrace,
+      );
       
-      // Force a small delay to ensure navigation completes
-      await Future.delayed(const Duration(milliseconds: 100));
-      
-    } catch (e) {
-      // Log the error
-      debugPrint('Logout error: $e');
-      
-      // If there's an error, still try to navigate to login
+      // Even if there's an error, ensure we're on the login screen
       if (context.mounted) {
-        final router = GoRouter.of(context);
-        router.go(Routes.login);
+        try {
+          GoRouter.of(context).go(Routes.login);
+        } catch (navError) {
+          developer.log('❌ [LogoutService] Failed to navigate to login: $navError');
+        }
       }
+    } finally {
+      _isLoggingOut = false;
     }
   }
 }

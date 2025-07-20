@@ -120,6 +120,7 @@ class ProfileDrawer extends StatelessWidget {
   }
   
   Future<void> _showLogoutConfirmation(BuildContext context) async {
+    print('🔄 [ProfileDrawer] Showing logout confirmation dialog');
     final shouldLogout = await showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
@@ -139,7 +140,10 @@ class ProfileDrawer extends StatelessWidget {
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
+              onPressed: () {
+                print('❌ [ProfileDrawer] Logout cancelled by user');
+                Navigator.of(context).pop(false);
+              },
               style: TextButton.styleFrom(
                 foregroundColor: Colors.grey[700], 
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),

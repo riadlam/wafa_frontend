@@ -25,7 +25,7 @@ class ShopSearchResult {
   final String name;
   final String? contactInfo;
   final String? location;
-  final String? image;
+  final List<String>? images;  // Changed from String? image to List<String>? images
   final String categoryName;
   final List<LoyaltyCard> loyaltyCards;
   final List<ShopLocation> shopLocations;
@@ -36,7 +36,7 @@ class ShopSearchResult {
     required this.name,
     this.contactInfo,
     this.location,
-    this.image,
+    this.images,
     required this.categoryName,
     required this.loyaltyCards,
     required this.shopLocations,
@@ -49,7 +49,7 @@ class ShopSearchResult {
       name: json['name'] as String,
       contactInfo: json['contact_info'] as String?,
       location: json['location'] as String?,
-      image: json['images'] as String?,
+      images: (json['images'] as List<dynamic>?)?.map((e) => e.toString()).toList(),
       categoryName: json['category_name'] as String? ?? 'No Category',
       loyaltyCards: (json['loyalty_cards'] as List<dynamic>?)
               ?.map((e) => LoyaltyCard.fromJson(e as Map<String, dynamic>))

@@ -1,0 +1,28 @@
+{
+  "appTitle": "Application de Fidélité",
+  "dashboard": {
+    "profile": "Profil",
+    "settings": "Paramètres",
+    "logout": "Se déconnecter",
+    "scanQr": "Scanner le QR Code",
+    "language": "Langue"
+  },
+  "language": {
+    "english": "Anglais",
+    "french": "Français",
+    "arabic": "Arabe"
+  },
+  "profile": {
+    "title": "Profil",
+    "email": "Email",
+    "name": "Nom",
+    "phone": "Téléphone",
+    "update": "Mettre à jour le profil"
+  },
+  "common": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "loading": "Chargement...",
+    "error": "Une erreur est survenue"
+  }
+}

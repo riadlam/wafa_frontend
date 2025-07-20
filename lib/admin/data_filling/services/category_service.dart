@@ -4,7 +4,7 @@ import '../models/category_model.dart';
 import 'package:loyaltyapp/services/auth_service.dart';
 
 class CategoryService {
-  static const String baseUrl = 'http://192.168.1.8:8000/api';
+  static const String baseUrl = 'http://192.168.1.15:8000/api';
 
   static Future<List<Category>> getCategories() async {
     try {

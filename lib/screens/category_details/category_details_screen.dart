@@ -538,7 +538,7 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
               sliver: SliverList(
                 delegate: SliverChildBuilderDelegate((context, index) {
                   final shop = shops[index];
-                  final baseUrl = 'http://192.168.1.8:8000';
+                  final baseUrl = 'http://192.168.1.15:8000';
                   final String imageUrl;
 
                   if (shop.images?.isNotEmpty == true) {

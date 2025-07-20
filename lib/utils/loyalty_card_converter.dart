@@ -69,7 +69,7 @@ class LoyaltyCardConverter {
       
       // If it's a relative path, construct full URL
       // Using the same base URL as in ApiClient for consistency
-      final baseUrl = 'http://192.168.1.8:8000';
+      final baseUrl = 'http://192.168.1.15:8000';
       final fullUrl = '$baseUrl${cleanedLogo.startsWith('/') ? '' : '/'}$cleanedLogo';
       _logger.d('Constructed full logo URL: $fullUrl');
       return fullUrl;
