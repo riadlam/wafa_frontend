@@ -4,6 +4,7 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:loyaltyapp/constants/app_colors.dart' as app_colors;
+import 'package:easy_localization/easy_localization.dart';
 import 'package:loyaltyapp/services/loyalty_card_service.dart';
 
 
@@ -57,7 +58,7 @@ class _EditLoyaltyCardSheetState extends State<EditLoyaltyCardSheet> {
     if (shopName.isEmpty) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Shop name is required')),
+          SnackBar(content: Text('edit_card_sheet.shop_name_required'.tr())),
         );
       }
       return;
@@ -88,7 +89,7 @@ class _EditLoyaltyCardSheetState extends State<EditLoyaltyCardSheet> {
       // Show success message
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Loyalty card updated successfully')),
+        SnackBar(content: Text('edit_card_sheet.update_success'.tr())),
       );
       
       // Close the sheet
@@ -98,7 +99,7 @@ class _EditLoyaltyCardSheetState extends State<EditLoyaltyCardSheet> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${e.toString()}')),
+          SnackBar(content: Text('edit_card_sheet.update_error'.tr(namedArgs: {'error': e.toString()}))),
         );
       }
     } finally {
@@ -126,7 +127,7 @@ class _EditLoyaltyCardSheetState extends State<EditLoyaltyCardSheet> {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              title: const Text('Pick a color'),
+              title: Text('edit_card_sheet.pick_color'.tr()),
               content: SingleChildScrollView(
                 child: MaterialPicker(
                   pickerColor: tempColor,
@@ -141,14 +142,14 @@ class _EditLoyaltyCardSheetState extends State<EditLoyaltyCardSheet> {
               actions: <Widget>[
                 TextButton(
                   onPressed: () => Navigator.of(ctx).pop(),
-                  child: const Text('Cancel'),
+                  child: Text('edit_card_sheet.cancel'.tr()),
                 ),
                 TextButton(
                   onPressed: () {
                     widget.selectedColor.value = tempColor;
                     Navigator.of(ctx).pop();
                   },
-                  child: const Text('Done'),
+                  child: Text('edit_card_sheet.done'.tr()),
                 ),
               ],
             );
@@ -190,7 +191,7 @@ class _EditLoyaltyCardSheetState extends State<EditLoyaltyCardSheet> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Edit Card Design',
+                'edit_card_sheet.title'.tr(),
                 style: GoogleFonts.poppins(
                   fontSize: 20,
                   fontWeight: FontWeight.w600,
@@ -215,7 +216,7 @@ class _EditLoyaltyCardSheetState extends State<EditLoyaltyCardSheet> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Brand Logo',
+                    'edit_card_sheet.brand_logo'.tr(),
                     style: GoogleFonts.poppins(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
@@ -332,7 +333,7 @@ class _EditLoyaltyCardSheetState extends State<EditLoyaltyCardSheet> {
                                         ),
                                         const SizedBox(height: 12),
                                         Text(
-                                          'Upload Logo',
+                                          'edit_card_sheet.upload_logo'.tr(),
                                           style: GoogleFonts.inter(
                                             fontSize: 14,
                                             fontWeight: FontWeight.w500,
@@ -369,7 +370,7 @@ class _EditLoyaltyCardSheetState extends State<EditLoyaltyCardSheet> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Shop Name',
+                'edit_card_sheet.shop_name'.tr(),
                 style: GoogleFonts.inter(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
@@ -384,7 +385,7 @@ class _EditLoyaltyCardSheetState extends State<EditLoyaltyCardSheet> {
                   color: const Color(0xFF1E293B),
                 ),
                 decoration: InputDecoration(
-                  hintText: 'Enter shop name',
+                  hintText: 'edit_card_sheet.enter_shop_name'.tr(),
                   hintStyle: GoogleFonts.inter(
                     color: Colors.grey[500],
                     fontSize: 14,
@@ -428,7 +429,7 @@ class _EditLoyaltyCardSheetState extends State<EditLoyaltyCardSheet> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Description',
+                'edit_card_sheet.description'.tr(),
                 style: GoogleFonts.inter(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
@@ -444,7 +445,7 @@ class _EditLoyaltyCardSheetState extends State<EditLoyaltyCardSheet> {
                   color: const Color(0xFF1E293B),
                 ),
                 decoration: InputDecoration(
-                  hintText: 'Enter shop description',
+                  hintText: 'edit_card_sheet.enter_description'.tr(),
                   hintStyle: GoogleFonts.inter(
                     color: Colors.grey[500],
                     fontSize: 14,
@@ -492,7 +493,7 @@ class _EditLoyaltyCardSheetState extends State<EditLoyaltyCardSheet> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Number of Stamps',
+                      'edit_card_sheet.stamps'.tr(),
                       style: GoogleFonts.inter(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
@@ -596,7 +597,7 @@ class _EditLoyaltyCardSheetState extends State<EditLoyaltyCardSheet> {
                             strokeWidth: 2,
                           ),
                         )
-                      : Text('Save Changes',
+                      : Text('edit_card_sheet.save_changes'.tr(),
                     style: GoogleFonts.poppins(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
@@ -625,7 +626,7 @@ class _EditLoyaltyCardSheetState extends State<EditLoyaltyCardSheet> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Card Color',
+              'edit_card_sheet.card_color'.tr(),
               style: GoogleFonts.inter(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
@@ -642,7 +643,9 @@ class _EditLoyaltyCardSheetState extends State<EditLoyaltyCardSheet> {
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(color: Colors.grey[300]!),
                 ),
+                constraints: const BoxConstraints(minHeight: 44), // Ensure minimum tap target size
                 child: Row(
+                  mainAxisSize: MainAxisSize.min, // Allow the row to be as small as possible
                   children: [
                     // Color preview circle
                     Container(
@@ -656,19 +659,22 @@ class _EditLoyaltyCardSheetState extends State<EditLoyaltyCardSheet> {
                     ),
                     const SizedBox(width: 12),
                     // Current color hex code
-                    Text(
-                      hexCode,
-                      style: GoogleFonts.robotoMono(
-                        fontSize: 14,
-                        color: Colors.grey[800],
-                        fontWeight: FontWeight.w500,
+                    Flexible(
+                      child: Text(
+                        hexCode,
+                        style: GoogleFonts.robotoMono(
+                          fontSize: 14,
+                          color: Colors.grey[800],
+                          fontWeight: FontWeight.w500,
+                        ),
+                        overflow: TextOverflow.ellipsis, // Handle overflow with ellipsis
                       ),
                     ),
-                    const Spacer(),
+                    const SizedBox(width: 8), // Reduced space before icon
                     // Edit icon
-                    Icon(
+                    const Icon(
                       Icons.color_lens_outlined,
-                      color: Colors.grey[600],
+                      color: Colors.grey,
                       size: 20,
                     ),
                   ],

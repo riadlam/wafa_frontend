@@ -4,6 +4,7 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:loyaltyapp/constants/colors.dart' as app_colors;
+import 'package:easy_localization/easy_localization.dart';
 
 import 'package:loyaltyapp/screens/subscribedloyaltycards/models/loyalty_card_model.dart';
 import 'package:loyaltyapp/screens/subscribedloyaltycards/widgets/loyalty_card_item.dart';
@@ -195,7 +196,7 @@ class _LoyaltyProgramFormState extends State<LoyaltyProgramForm> {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              title: const Text('Pick a color'),
+              title: Text('loyalty_program_form.pick_a_color'.tr()),
               content: SingleChildScrollView(
                 child: MaterialPicker(
                   pickerColor: tempColor,
@@ -210,14 +211,14 @@ class _LoyaltyProgramFormState extends State<LoyaltyProgramForm> {
               actions: <Widget>[
                 TextButton(
                   onPressed: () => Navigator.of(ctx).pop(),
-                  child: const Text('Cancel'),
+                  child: Text('loyalty_program_form.cancel'.tr()),
                 ),
                 TextButton(
                   onPressed: () {
                     _selectedColor.value = tempColor;
                     Navigator.of(ctx).pop();
                   },
-                  child: const Text('Done'),
+                  child: Text('loyalty_program_form.done'.tr()),
                 ),
               ],
             );
@@ -238,7 +239,7 @@ class _LoyaltyProgramFormState extends State<LoyaltyProgramForm> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Card Color',
+              'loyalty_program_form.card_color'.tr(),
               style: GoogleFonts.inter(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
@@ -329,7 +330,7 @@ class _LoyaltyProgramFormState extends State<LoyaltyProgramForm> {
         children: [
           // Card Preview
           Text(
-            'Card Preview',
+            'loyalty_program_form.card_preview'.tr(),
             style: GoogleFonts.inter(
               fontSize: 16,
               fontWeight: FontWeight.w500,
@@ -347,7 +348,7 @@ class _LoyaltyProgramFormState extends State<LoyaltyProgramForm> {
                     shopName:
                         _shopNameController.text.isNotEmpty
                             ? _shopNameController.text
-                            : 'Your Business',
+                            : 'loyalty_program_form.your_business'.tr(),
                     logoFile: logoFile,
                     color: color,
                     totalStamps: int.tryParse(_stampsController.text) ?? 8,
@@ -367,7 +368,7 @@ class _LoyaltyProgramFormState extends State<LoyaltyProgramForm> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Brand Logo',
+                'loyalty_program_form.brand_logo'.tr(),
                 style: GoogleFonts.inter(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
@@ -422,7 +423,7 @@ class _LoyaltyProgramFormState extends State<LoyaltyProgramForm> {
                                         ),
                                         const SizedBox(height: 8),
                                         Text(
-                                          'Add Logo',
+                                          'loyalty_program_form.add_logo'.tr(),
                                           style: GoogleFonts.inter(
                                             fontSize: 12,
                                             color: Colors.grey[600],
@@ -446,7 +447,7 @@ class _LoyaltyProgramFormState extends State<LoyaltyProgramForm> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Shop Name',
+                'loyalty_program_form.shop_name'.tr(),
                 style: GoogleFonts.inter(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
@@ -459,7 +460,7 @@ class _LoyaltyProgramFormState extends State<LoyaltyProgramForm> {
                 focusNode: _shopNameFocusNode,
                 onChanged: (_) => setState(() {}),
                 decoration: InputDecoration(
-                  hintText: 'Enter shop name',
+                  hintText: 'loyalty_program_form.enter_shop_name'.tr(),
                   hintStyle: GoogleFonts.inter(
                     color: Colors.grey[500],
                     fontSize: 14,
@@ -507,7 +508,7 @@ class _LoyaltyProgramFormState extends State<LoyaltyProgramForm> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Description',
+                'loyalty_program_form.description'.tr(),
                 style: GoogleFonts.inter(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
@@ -519,7 +520,7 @@ class _LoyaltyProgramFormState extends State<LoyaltyProgramForm> {
                 controller: _descriptionController,
                 maxLines: 3,
                 decoration: InputDecoration(
-                  hintText: 'Enter shop description',
+                  hintText: 'loyalty_program_form.enter_shop_description'.tr(),
                   hintStyle: GoogleFonts.inter(
                     color: Colors.grey[500],
                     fontSize: 14,
@@ -569,7 +570,7 @@ class _LoyaltyProgramFormState extends State<LoyaltyProgramForm> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Number of Stamps',
+                      'loyalty_program_form.number_of_stamps'.tr(),
                       style: GoogleFonts.inter(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
@@ -682,7 +683,7 @@ class _LoyaltyProgramFormState extends State<LoyaltyProgramForm> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: const Text('Back'),
+                  child: Text('loyalty_program_form.back'.tr()),
                 ),
                 ElevatedButton(
                   onPressed: widget.isSubmitting ? null : widget.onSubmit,
@@ -709,7 +710,7 @@ class _LoyaltyProgramFormState extends State<LoyaltyProgramForm> {
                               strokeWidth: 2,
                             ),
                           )
-                          : const Text('Save & Continue'),
+                          : Text('loyalty_program_form.save_continue'.tr()),
                 ),
               ],
             ),

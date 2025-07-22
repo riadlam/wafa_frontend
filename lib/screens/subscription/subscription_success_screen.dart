@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:loyaltyapp/constants/app_colors.dart';
 import 'package:loyaltyapp/constants/routes.dart';
 import 'package:go_router/go_router.dart';
@@ -18,9 +19,12 @@ class SubscriptionSuccessScreen extends StatelessWidget {
     this.trialEndsAt,
   }) : super(key: key);
 
-  String _formatDate(DateTime? date) {
+  String _formatDate(DateTime? date, BuildContext context) {
     if (date == null) return '';
-    return '${date.day}/${date.month}/${date.year}';
+    
+    // Use DateFormat from easy_localization for proper localization
+    final format = DateFormat('d MMMM yyyy', context.locale.toString());
+    return format.format(date);
   }
 
   void _handleContinue(BuildContext context) {
@@ -37,7 +41,7 @@ class SubscriptionSuccessScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Subscription Successful'),
+        title: Text('subscription.successTitle'.tr()),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
@@ -68,8 +72,8 @@ class SubscriptionSuccessScreen extends StatelessWidget {
               // Title
               Text(
                 isFreeTrial
-                    ? 'Free Trial Activated!'
-                    : 'Subscription Successful!',
+                    ? 'subscription.freeTrialActivated'.tr()
+                    : 'subscription.subscriptionSuccessful'.tr(),
                 style: theme.textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: Colors.green,
@@ -105,8 +109,8 @@ class SubscriptionSuccessScreen extends StatelessWidget {
                     const SizedBox(height: 8),
                     Text(
                       isFreeTrial
-                          ? '30-Day Free Trial'
-                          : '\$${plan.price.toStringAsFixed(2)} / ${plan.billing.replaceAll('billed ', '')}',
+                          ? 'subscription.thirtyDayFreeTrial'.tr()
+                          : '\$${plan.price.toStringAsFixed(2)} / ${plan.billing}',
                       style: theme.textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: AppColors.textPrimary,
@@ -122,9 +126,9 @@ class SubscriptionSuccessScreen extends StatelessWidget {
               Text(
                 isFreeTrial
                     ? trialEndsAt != null
-                        ? 'Your 30-day free trial has been activated! It will expire on ${_formatDate(trialEndsAt)}. Start building your customer base today.'
-                        : 'Your 30-day free trial has been activated! Start building your customer base today.'
-                    : 'Your ${plan.name} subscription is now active! Thank you for choosing us.',
+                        ? '${'subscription.freeTrialActivatedWithDate'.tr(args: [_formatDate(trialEndsAt, context)])} ${'subscription.startBuildingToday'.tr()}'
+                        : '${'subscription.freeTrialActivated'.tr()} ${'subscription.startBuildingToday'.tr()}'
+                    : 'subscription.subscriptionActive'.tr(args: [plan.name]),
                 style: theme.textTheme.bodyLarge?.copyWith(
                   color: Colors.grey[600],
                   height: 1.5,
@@ -146,9 +150,9 @@ class SubscriptionSuccessScreen extends StatelessWidget {
                     ),
                     elevation: 2,
                   ),
-                  child: const Text(
-                    'Continue to Shop Setup',
-                    style: TextStyle(
+                  child: Text(
+                    'subscription.continueToShopSetup'.tr(),
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                       color: Colors.white,

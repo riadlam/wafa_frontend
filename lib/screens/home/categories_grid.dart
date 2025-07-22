@@ -7,6 +7,7 @@ import 'package:loyaltyapp/services/category_service.dart';
 import 'package:loyaltyapp/scalaton_loader/category_grid_skeleton.dart';
 import 'package:loyaltyapp/utils/custom_page_route.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class CategoriesGrid extends StatefulWidget {
   const CategoriesGrid({super.key});
@@ -44,7 +45,7 @@ class _CategoriesGridState extends State<CategoriesGrid> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _error = 'Failed to load categories';
+          _error = 'home.error_loading_categories'.tr();
           _isLoading = false;
         });
       }
@@ -52,10 +53,12 @@ class _CategoriesGridState extends State<CategoriesGrid> {
   }
 
   // Card styling
-  static const Color _textColor = Colors.white; // White text for better contrast
-  static const Color _iconContainerColor = Colors.white24; // Semi-transparent white for icon container
+  static const Color _textColor =
+      Colors.white; // White text for better contrast
+  static const Color _iconContainerColor =
+      Colors.white24; // Semi-transparent white for icon container
   static const double _cardBorderRadius = 16.0;
-  
+
   // Gradient colors for cards (applied based on category index % 6)
   // Index 0: Purple to Blue
   // Index 1: Teal to Green
@@ -68,10 +71,10 @@ class _CategoriesGridState extends State<CategoriesGrid> {
     [const Color(0xFFB24592), const Color(0xFFF15F79)], // Index 1
     [const Color(0xFF283E51), const Color(0xFF485563)], // Index 2
     [const Color(0xFF8E2DE2), const Color(0xFF4A00E0)], // Index 3
-  [const Color(0xFFee0979), const Color(0xFFFF6A00)], // Index 4
+    [const Color(0xFFee0979), const Color(0xFFFF6A00)], // Index 4
     [const Color(0xFF4776E6), const Color(0xFF8E54E9)], // Index 5
   ];
-  
+
   // Box shadows for depth
   final List<BoxShadow> _cardShadows = [
     BoxShadow(
@@ -79,18 +82,26 @@ class _CategoriesGridState extends State<CategoriesGrid> {
       blurRadius: 15,
       offset: const Offset(0, 6),
       spreadRadius: 1,
-    )
+    ),
   ];
-  
-  // Static data for category appearance
-  final List<Map<String, dynamic>> _categoryAppearance = [
-  {'subtitle': 'Luxury Fragrance Picks', 'icon': LucideIcons.sprayCan},       // Perfume
-  {'subtitle': 'Professional Hair Styling', 'icon': LucideIcons.scissors},    // Hair Salon
-  {'subtitle': 'Expert Tailoring Services', 'icon': LucideIcons.shirt},       // Tailoring
-  {'subtitle': 'Fresh Coffee & Drinks', 'icon': LucideIcons.cupSoda},         // Coffee & Drinks
-  {'subtitle': 'Delicious Restaurant Meals', 'icon': LucideIcons.sandwich},   // Restaurants
-];
 
+  // Get category subtitle from translations
+  String _getCategorySubtitle(int index) {
+    try {
+      return 'home.category_subtitle_$index'.tr();
+    } catch (e) {
+      return '';
+    }
+  }
+
+  // Get category title from translations
+  String _getCategoryTitle(int index) {
+    try {
+      return 'home.category_title_$index'.tr();
+    } catch (e) {
+      return '';
+    }
+  }
 
   // Get full image URL for a category
   String? _getFullImageUrl(String? imagePath) {
@@ -105,38 +116,51 @@ class _CategoriesGridState extends State<CategoriesGrid> {
     return 'http://192.168.1.15:8000${imagePath.startsWith('/') ? '' : '/'}$imagePath';
   }
 
-  // Get appearance data for a category by index
-  Map<String, dynamic> _getCategoryAppearance(int index) {
-    return _categoryAppearance[index % _categoryAppearance.length];
+  // Get category icon based on index
+  static const List<IconData> _categoryIcons = [
+    LucideIcons.sprayCan, // Perfume
+    LucideIcons.scissors, // Hair Salon
+    LucideIcons.shirt, // Tailoring
+    LucideIcons.cupSoda, // Coffee & Drinks
+    LucideIcons.sandwich, // Restaurants
+  ];
+
+  // Get category icon based on index
+  IconData _getCategoryIcon(int index) {
+    return _categoryIcons[index % _categoryIcons.length];
   }
 
   @override
   Widget build(BuildContext context) {
-
     if (_isLoading) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
-            padding: EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 12.0),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 12.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Explore Categories',
-                  style: TextStyle(
-                    fontSize: 24.0,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-                SizedBox(height: 4.0),
-                Text(
-                  'Discover amazing places to eat and drink',
-                  style: TextStyle(
-                    fontSize: 14.0,
-                    color: AppColors.textSecondary,
-                  ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'home.explore_categories'.tr(),
+                      style: const TextStyle(
+                        fontSize: 24.0,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 4.0),
+                    Text(
+                      'home.discover_places'.tr(),
+                      style: TextStyle(
+                        fontSize: 14.0,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -153,14 +177,8 @@ class _CategoriesGridState extends State<CategoriesGrid> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              _error!,
-              style: const TextStyle(color: Colors.red),
-            ),
-            TextButton(
-              onPressed: _loadCategories,
-              child: const Text('Retry'),
-            ),
+            Text(_error!, style: const TextStyle(color: Colors.red)),
+            TextButton(onPressed: _loadCategories, child: const Text('Retry')),
           ],
         ),
       );
@@ -179,32 +197,33 @@ class _CategoriesGridState extends State<CategoriesGrid> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Builder(
-                      builder: (context) => Row(
-                        children: [
-                          Container(
-                            width: 4,
-                            height: 24,
-                            margin: const EdgeInsets.only(right: 12.0),
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).primaryColor,
-                              borderRadius: BorderRadius.circular(2.0),
-                            ),
+                      builder:
+                          (context) => Row(
+                            children: [
+                              Container(
+                                width: 4,
+                                height: 24,
+                                margin: const EdgeInsets.only(right: 12.0),
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).primaryColor,
+                                  borderRadius: BorderRadius.circular(2.0),
+                                ),
+                              ),
+                              Text(
+                                'home.explore_categories'.tr(),
+                                style: TextStyle(
+                                  fontSize: 22.0,
+                                  fontWeight: FontWeight.w800,
+                                  color: AppColors.textPrimary,
+                                  letterSpacing: -0.3,
+                                ),
+                              ),
+                            ],
                           ),
-                          Text(
-                            'Explore Categories',
-                            style: TextStyle(
-                              fontSize: 22.0,
-                              fontWeight: FontWeight.w800,
-                              color: AppColors.textPrimary,
-                              letterSpacing: -0.3,
-                            ),
-                          ),
-                        ],
-                      ),
                     ),
                     const SizedBox(height: 6.0),
                     Text(
-                      'Discover amazing places to eat and drink',
+                      'home.discover_places'.tr(),
                       style: TextStyle(
                         fontSize: 13.0,
                         color: AppColors.textSecondary,
@@ -253,32 +272,33 @@ class _CategoriesGridState extends State<CategoriesGrid> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Builder(
-                      builder: (context) => Row(
-                        children: [
-                          Container(
-                            width: 4,
-                            height: 24,
-                            margin: const EdgeInsets.only(right: 12.0),
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).primaryColor,
-                              borderRadius: BorderRadius.circular(2.0),
-                            ),
+                      builder:
+                          (context) => Row(
+                            children: [
+                              Container(
+                                width: 4,
+                                height: 24,
+                                margin: const EdgeInsets.only(right: 12.0),
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).primaryColor,
+                                  borderRadius: BorderRadius.circular(2.0),
+                                ),
+                              ),
+                              Text(
+                                'home.explore_categories'.tr(),
+                                style: TextStyle(
+                                  fontSize: 22.0,
+                                  fontWeight: FontWeight.w800,
+                                  color: AppColors.textPrimary,
+                                  letterSpacing: -0.3,
+                                ),
+                              ),
+                            ],
                           ),
-                          Text(
-                            'Explore Categories',
-                            style: TextStyle(
-                              fontSize: 22.0,
-                              fontWeight: FontWeight.w800,
-                              color: AppColors.textPrimary,
-                              letterSpacing: -0.3,
-                            ),
-                          ),
-                        ],
-                      ),
                     ),
                     const SizedBox(height: 6.0),
                     Text(
-                      'Discover amazing places to eat and drink',
+                      'home.discover_places'.tr(),
                       style: TextStyle(
                         fontSize: 13.0,
                         color: AppColors.textSecondary,
@@ -290,17 +310,24 @@ class _CategoriesGridState extends State<CategoriesGrid> {
               ),
               // GridView with fixed height
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20.0,
+                  vertical: 8.0,
+                ),
                 child: GridView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 8.0),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 4.0,
+                    vertical: 8.0,
+                  ),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
                     childAspectRatio: 0.85,
                     crossAxisSpacing: 16.0,
                     mainAxisSpacing: 16.0,
-                    mainAxisExtent: 180, // Slightly reduced height for better proportions
+                    mainAxisExtent:
+                        180, // Slightly reduced height for better proportions
                   ),
                   itemCount: categories.length,
                   itemBuilder: (context, index) {
@@ -320,27 +347,26 @@ class _CategoriesGridState extends State<CategoriesGrid> {
     );
   }
 
-  // Add Material widget to handle ink splash effects properly
+  // Build category card widget
   Widget _buildCategoryCard(
     BuildContext context, {
     required Category category,
     required int index,
   }) {
-    // Get static appearance data for this category
-    final appearance = _getCategoryAppearance(index);
-    final String subtitle = appearance['subtitle'] as String? ?? 'Category';
+    // Get category subtitle from translations
+    final subtitle = _getCategorySubtitle(index);
     // Image URL is no longer used in the current design
     // final String? imageUrl = category.imagePath != null ? _getFullImageUrl(category.imagePath) : null;
 
     // Get gradient based on index
     final gradient = _cardGradients[index % _cardGradients.length];
-    
+
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(
           CustomPageRoute(
             child: CategoryDetailsScreen(
-              categoryTitle: category.name,
+              categoryTitle: _getCategoryTitle(index),
               categorySubtitle: subtitle,
               gradient: gradient,
               categoryId: category.id,
@@ -393,7 +419,7 @@ class _CategoriesGridState extends State<CategoriesGrid> {
                       ),
                     ),
                     child: Icon(
-                      appearance['icon'] as IconData? ?? Icons.category,
+                      _getCategoryIcon(index),
                       size: 28.0,
                       color: _textColor,
                     ),
@@ -401,16 +427,13 @@ class _CategoriesGridState extends State<CategoriesGrid> {
                   const SizedBox(height: 16.0),
                   // Category name
                   Text(
-                    category.name,
+                    _getCategoryTitle(index),
                     style: const TextStyle(
-                      fontSize: 17.0,
-                      fontWeight: FontWeight.w700,
                       color: _textColor,
-                      letterSpacing: 0.2,
-                      height: 1.2,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
                     ),
-                    textAlign: TextAlign.center,
-                    maxLines: 2,
+                    maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 6.0),
@@ -424,17 +447,19 @@ class _CategoriesGridState extends State<CategoriesGrid> {
                       color: Colors.white.withOpacity(0.15),
                       borderRadius: BorderRadius.circular(12.0),
                     ),
-                    child: Text(
-                      subtitle.toUpperCase(),
-                      style: TextStyle(
-                        fontSize: 9.0,
-                        color: _textColor.withOpacity(0.9),
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 0.5,
-                      ),
-                      textAlign: TextAlign.center,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                    child: Builder(
+                      builder:
+                          (context) => Text(
+                            _getCategorySubtitle(index),
+                            style: TextStyle(
+                              color: _textColor.withOpacity(0.9),
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 0.5,
+                            ),
+                            textAlign: TextAlign.center,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                     ),
                   ),
                 ],

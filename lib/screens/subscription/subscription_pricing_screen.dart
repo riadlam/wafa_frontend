@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:loyaltyapp/constants/app_colors.dart';
 import 'package:loyaltyapp/services/subscription_service.dart';
 import 'package:url_launcher/url_launcher_string.dart';
-import 'subscription_success_screen.dart';
+import 'package:loyaltyapp/screens/subscription/subscription_success_screen.dart';
 
 class SubscriptionPricingScreen extends StatefulWidget {
   const SubscriptionPricingScreen({Key? key}) : super(key: key);
@@ -15,15 +16,25 @@ class SubscriptionPricingScreen extends StatefulWidget {
 class _SubscriptionPricingScreenState extends State<SubscriptionPricingScreen> {
   Future<void> _launchWhatsApp() async {
     const phoneNumber = '+1234567890'; // Replace with your WhatsApp number
-    const message = 'Hello, I have a question about your subscription plans.';
+    final message = 'subscription.whatsappMessage'.tr();
     final url = 'https://wa.me/$phoneNumber?text=${Uri.encodeFull(message)}';
 
     if (await canLaunchUrlString(url)) {
       await launchUrlString(url);
     } else {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Could not launch WhatsApp')),
+      if (context.mounted) {
+        await showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('subscription.errorTitle'.tr()),
+            content: Text('subscription.errorMessage'.tr()),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('subscription.tryAgain'.tr()),
+              ),
+            ],
+          ),
         );
       }
     }
@@ -59,8 +70,8 @@ class _SubscriptionPricingScreenState extends State<SubscriptionPricingScreen> {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      'Get Started',
-                      style: theme.textTheme.headlineSmall?.copyWith(
+                      'subscription.selectYourPlan'.tr(),
+                      style: theme.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: AppColors.textPrimary,
                       ),
@@ -74,7 +85,7 @@ class _SubscriptionPricingScreenState extends State<SubscriptionPricingScreen> {
                   child: Column(
                     children: [
                       Text(
-                        'Start Your Free Trial',
+                        'subscription.startYourFreeTrial'.tr(),
                         style: theme.textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: AppColors.textPrimary,
@@ -82,8 +93,8 @@ class _SubscriptionPricingScreenState extends State<SubscriptionPricingScreen> {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        'Try all features free for 30 days. No credit card required.',
-                        style: theme.textTheme.bodyLarge?.copyWith(
+                        'subscription.haveQuestions'.tr(),
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           color: AppColors.textSecondary,
                         ),
                         textAlign: TextAlign.center,
@@ -106,7 +117,7 @@ class _SubscriptionPricingScreenState extends State<SubscriptionPricingScreen> {
                     elevation: 0,
                   ),
                   child: Text(
-                    'Start 30-Day Free Trial',
+                    '${'subscription.startYourFreeTrial'.tr()}',
                     style: theme.textTheme.titleMedium?.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -137,11 +148,11 @@ class _SubscriptionPricingScreenState extends State<SubscriptionPricingScreen> {
                             const Icon(Icons.chat, color: Colors.green, size: 24),
                       ),
                       const SizedBox(width: 8),
-                      const Flexible(
+                      Flexible(
                         child: Text(
-                          'Contact Us on WhatsApp',
+                          '${'subscription.contactUs'.tr()} ${context.locale.languageCode == 'ar' ? 'واتساب' : 'on WhatsApp'}',
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.green,
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
@@ -165,7 +176,7 @@ class _SubscriptionPricingScreenState extends State<SubscriptionPricingScreen> {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      'Secure signup. No credit card required.',
+                      'subscription.secureSignup'.tr(),
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: AppColors.textSecondary,
                       ),
@@ -186,7 +197,16 @@ class _SubscriptionPricingScreenState extends State<SubscriptionPricingScreen> {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => const Center(child: CircularProgressIndicator()),
+      builder: (context) => Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const CircularProgressIndicator(),
+            const SizedBox(height: 16),
+            Text('subscription.processing'.tr()),
+          ],
+        ),
+      ),
     );
 
     try {
@@ -198,33 +218,49 @@ class _SubscriptionPricingScreenState extends State<SubscriptionPricingScreen> {
 
       if (response['success'] == true) {
         final userData = response['data']['user'];
-
+        
+        // Show success dialog
         if (context.mounted) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder:
-                  (context) => SubscriptionSuccessScreen(
-                    plan: SubscriptionPlan(
-                      name: 'Free Trial',
-                      price: 0,
-                      billing: 'for 30 days',
-                      isPopular: false,
-                      features: [
-                        'All Pro Features',
-                        'Up to 500 Customers',
-                        'Advanced Analytics',
-                        'Priority Support',
-                      ],
-                    ),
-                    isFreeTrial: true,
-                    trialEndsAt:
-                        userData['trial_ends_at'] != null
-                            ? DateTime.parse(userData['trial_ends_at'])
-                            : null,
-                  ),
+          await showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text('subscription.successTitle'.tr()),
+              content: Text('subscription.successMessage'.tr()),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('subscription.goToDashboard'.tr()),
+                ),
+              ],
             ),
           );
+          
+          // Navigate to success screen
+          if (context.mounted) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SubscriptionSuccessScreen(
+                  plan: SubscriptionPlan(
+                    name: 'subscription.freeTrial'.tr(),
+                    price: 0,
+                    billing: 'subscription.for30Days'.tr(),
+                    isPopular: false,
+                    features: [
+                      'subscription.features.allProFeatures'.tr(),
+                      'subscription.features.upTo500Customers'.tr(),
+                      'subscription.features.advancedAnalytics'.tr(),
+                      'subscription.features.prioritySupport'.tr(),
+                    ],
+                  ),
+                  isFreeTrial: true,
+                  trialEndsAt: userData['trial_ends_at'] != null
+                      ? DateTime.parse(userData['trial_ends_at'])
+                      : null,
+                ),
+              ),
+            );
+          }
         }
       } else {
         if (context.mounted) {
@@ -241,10 +277,17 @@ class _SubscriptionPricingScreenState extends State<SubscriptionPricingScreen> {
     } catch (e) {
       if (context.mounted) {
         Navigator.of(context).pop(); // Dismiss loading dialog
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: ${e.toString()}'),
-            backgroundColor: Colors.red,
+        await showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('subscription.errorTitle'.tr()),
+            content: Text('${'subscription.errorMessage'.tr()}\n\n${e.toString()}'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('subscription.tryAgain'.tr()),
+              ),
+            ],
           ),
         );
       }

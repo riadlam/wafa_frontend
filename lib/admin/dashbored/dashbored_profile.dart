@@ -8,11 +8,282 @@ import 'package:loyaltyapp/providers/auth_state_provider.dart';
 import 'package:loyaltyapp/providers/user_provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:loyaltyapp/admin/dashbored/widgets/language_selector_sheet.dart';
+import 'package:loyaltyapp/services/account_service.dart';
+import 'package:loyaltyapp/constants/app_colors.dart' as app_colors;
+import 'package:loyaltyapp/models/user_model.dart';
+import 'package:loyaltyapp/services/auth_service.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'dart:convert' show utf8;
 
-class DashboardProfile extends StatelessWidget {
+class DashboardProfile extends StatefulWidget {
   const DashboardProfile({super.key});
-  
+
+  @override
+  State<DashboardProfile> createState() => _DashboardProfileState();
+}
+
+class _EditProfileScreen extends StatefulWidget {
+  final String name;
+  final String email;
+
+  const _EditProfileScreen({
+    Key? key,
+    required this.name,
+    required this.email,
+  }) : super(key: key);
+
+  @override
+  _EditProfileScreenState createState() => _EditProfileScreenState();
+}
+
+class _EditProfileScreenState extends State<_EditProfileScreen> {
+  final _formKey = GlobalKey<FormState>();
+  late TextEditingController _nameController;
+  bool _isLoading = false;
+  String? _errorMessage;
+  String? _successMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController(text: widget.name);
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _updateProfile() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+      _successMessage = null;
+    });
+
+    try {
+      final authService = AuthService();
+      final token = await authService.getJwtToken();
+      
+      if (token == null) {
+        throw Exception('Not authenticated');
+      }
+      
+      final response = await http.put(
+        Uri.parse('http://192.168.1.15:8000/api/user/update-name'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({'name': _nameController.text.trim()}),
+      );
+      
+      if (response.statusCode == 200) {
+        // Return the updated data
+        if (mounted) {
+          Navigator.pop(context, {
+            'name': _nameController.text.trim(),
+            'email': widget.email,
+          });
+        }
+      } else {
+        final errorData = jsonDecode(utf8.decode(response.bodyBytes));
+        throw Exception(errorData['message'] ?? 'Failed to update profile');
+      }
+    } catch (e) {
+      setState(() {
+        _errorMessage = e.toString().replaceAll('Exception: ', '');
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'Edit Profile',
+          style: GoogleFonts.poppins(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: app_colors.AppColors.primary,
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
+        iconTheme: const IconThemeData(color: Colors.white),
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const SizedBox(height: 20),
+                
+                // Error Message
+                if (_errorMessage != null)
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    margin: const EdgeInsets.only(bottom: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.red.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.red.withOpacity(0.3)),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.error_outline, color: Colors.red),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            _errorMessage!,
+                            style: GoogleFonts.inter(color: Colors.red),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                
+                // Success Message
+                if (_successMessage != null)
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    margin: const EdgeInsets.only(bottom: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.green.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.green.withOpacity(0.3)),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.check_circle_outline, color: Colors.green),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            _successMessage!,
+                            style: GoogleFonts.inter(color: Colors.green),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                
+                // Name Field
+                TextFormField(
+                  controller: _nameController,
+                  decoration: InputDecoration(
+                    labelText: 'Full Name',
+                    hintText: 'Enter your full name',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: const BorderSide(color: app_colors.AppColors.lightGrey),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: const BorderSide(color: app_colors.AppColors.lightGrey),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: const BorderSide(color: app_colors.AppColors.primary, width: 1.5),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 14,
+                    ),
+                    prefixIcon: const Icon(Icons.person_outline, color: app_colors.AppColors.primary),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Please enter your name';
+                    }
+                    return null;
+                  },
+                ),
+                
+                const SizedBox(height: 24),
+                
+                // Save Button
+                ElevatedButton(
+                  onPressed: _isLoading ? null : _updateProfile,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: app_colors.AppColors.primary,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    elevation: 0,
+                    disabledBackgroundColor: app_colors.AppColors.primary.withOpacity(0.5),
+                  ),
+                  child: _isLoading
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          ),
+                        )
+                      : Text(
+                          'Save Changes',
+                          style: GoogleFonts.inter(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                ),
+                
+                const SizedBox(height: 16),
+                
+                // Cancel Button
+                TextButton(
+                  onPressed: _isLoading ? null : () => Navigator.pop(context),
+                  child: Text(
+                    'Cancel',
+                    style: GoogleFonts.inter(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: app_colors.AppColors.primary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _DashboardProfileState extends State<DashboardProfile> {
   // Get user initials from name
+  void _onLanguageChanged() {
+    if (mounted) {
+      setState(() {
+        // This will force a rebuild with the new locale
+      });
+    }
+  }
+
   String _getCurrentLanguageName(BuildContext context) {
     final locale = context.locale.languageCode;
     switch (locale) {
@@ -187,7 +458,66 @@ class DashboardProfile extends StatelessWidget {
                         icon: Icons.person_outline,
                         title: 'dashboard_profile.personal_information'.tr(),
                         subtitle: 'dashboard_profile.update_personal_details'.tr(),
-                        onTap: () {},
+                        onTap: () async {
+                          final userProvider = Provider.of<UserProvider>(context, listen: false);
+                          final user = userProvider.user;
+                          
+                          if (user != null) {
+                            final result = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => _EditProfileScreen(
+                                  name: user.name,
+                                  email: user.email,
+                                ),
+                              ),
+                            );
+                            
+                            if (result != null && result is Map<String, String>) {
+                              // Update user data in AuthService
+                              final authService = AuthService();
+                              await authService.updateUserInfo(
+                                email: user.email,
+                                name: result['name'] ?? user.name,
+                                photoUrl: user.avatar ?? '',
+                                role: user.role,
+                              );
+                              
+                              // Update user data in UserProvider
+                              final updatedUser = UserModel(
+                                id: user.id,
+                                name: result['name'] ?? user.name,
+                                email: user.email,
+                                googleId: user.googleId,
+                                avatar: user.avatar,
+                                role: user.role,
+                                isExisted: user.isExisted,
+                                createdAt: user.createdAt,
+                                updatedAt: DateTime.now(),
+                              );
+                              
+                              userProvider.updateUser(updatedUser);
+                              
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Profile updated successfully'),
+                                    backgroundColor: Colors.green,
+                                    behavior: SnackBarBehavior.floating,
+                                    margin: EdgeInsets.all(8),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(Radius.circular(8)),
+                                    ),
+                                  ),
+                                );
+                              }
+                              
+                              // Refresh user data from the server
+                              await authService.fetchUser();
+                            }
+                          }
+                        },
+                        trailing: const Icon(Icons.chevron_right, color: Colors.white70),
                       ),
                     ],
                   ),
@@ -205,7 +535,9 @@ class DashboardProfile extends StatelessWidget {
                         () {
                           showModalBottomSheet(
                             context: context,
-                            builder: (context) => const LanguageSelectorSheet(),
+                            builder: (context) => LanguageSelectorSheet(
+                              onLanguageChanged: _onLanguageChanged,
+                            ),
                             shape: const RoundedRectangleBorder(
                               borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                             ),
@@ -337,6 +669,125 @@ class DashboardProfile extends StatelessWidget {
                       ),
                       child: Text(
                         'dashboard_profile.logout'.tr(),
+                        style: GoogleFonts.inter(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                  
+                  const SizedBox(height: 16),
+                  
+                  // Delete Account Button
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        // Show confirmation dialog
+                        final shouldDelete = await showDialog<bool>(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text('drawer.delete_account_title'.tr()),
+                              content: Text('drawer.delete_account_message'.tr()),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.of(context).pop(false),
+                                  child: Text('drawer.cancel'.tr()),
+                                ),
+                                TextButton(
+                                  onPressed: () => Navigator.of(context).pop(true),
+                                  style: TextButton.styleFrom(
+                                    foregroundColor: Colors.red,
+                                  ),
+                                  child: Text('drawer.confirm_delete'.tr()),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+
+                        // If user confirms deletion
+                        if (shouldDelete == true) {
+                          if (context.mounted) {
+                            // Show loading indicator
+                            showDialog(
+                              context: context,
+                              barrierDismissible: false,
+                              builder: (BuildContext context) {
+                                return const Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              },
+                            );
+                            
+                            try {
+                              // Get the auth state provider
+                              final authState = Provider.of<AuthStateProvider>(
+                                context,
+                                listen: false,
+                              );
+                              
+                              // Call the delete account API
+                              final accountService = AccountService();
+                              final success = await accountService.deleteAccount();
+                              
+                              if (success) {
+                                // If account deletion is successful, sign out
+                                await authState.signOut();
+                                
+                                if (context.mounted) {
+                                  // Close loading dialog
+                                  Navigator.of(context, rootNavigator: true).pop();
+                                  
+                                  // Navigate to login
+                                  final router = GoRouter.of(context);
+                                  if (router.canPop()) {
+                                    router.pop();
+                                  }
+                                  router.go(Routes.login);
+                                  
+                                  // Show success message
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('drawer.account_deleted_successfully'.tr()),
+                                      backgroundColor: Colors.green,
+                                    ),
+                                  );
+                                }
+                              } else {
+                                throw Exception('Failed to delete account');
+                              }
+                            } catch (e) {
+                              if (context.mounted) {
+                                // Close loading dialog
+                                Navigator.of(context, rootNavigator: true).pop();
+                                
+                                // Show error message
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('drawer.account_deletion_failed'.tr()),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
+                            }
+                          }
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.red,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          side: BorderSide(color: Colors.red.withOpacity(0.2)),
+                        ),
+                        elevation: 0,
+                      ),
+                      child: Text(
+                        'drawer.delete_account'.tr(),
                         style: GoogleFonts.inter(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,

@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:developer' as developer;
 import 'package:http/http.dart' as http;
-import 'package:loyaltyapp/hive_models/hive_service.dart';
 import 'package:loyaltyapp/models/stamp_activation_model.dart';
 import 'package:loyaltyapp/models/pending_payment_model.dart';
 import 'package:loyaltyapp/services/auth_service.dart';
@@ -33,16 +32,6 @@ class StampService {
 
   Future<PlanInfo> getPlanInfo() async {
     try {
-      // Ensure Hive is initialized
-      await HiveService.ensureInitialized();
-      
-      // Try to get cached data first
-      final cachedData = await HiveService.getCachedDashboardPlanInfo();
-      if (cachedData != null) {
-        developer.log('📦 [StampService] Using cached plan info');
-        return PlanInfo.fromJson(cachedData);
-      }
-      
       final token = await _authService.getJwtToken();
       final headers = {
         'Accept': 'application/json',
@@ -59,29 +48,14 @@ class StampService {
       
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        final planInfo = PlanInfo.fromJson(data);
-        
-        // Cache the response
-        await HiveService.saveDashboardPlanInfo({
-          'plan': planInfo.plan,
-          'expiration_date': planInfo.expirationDate,
-          'expires_in': planInfo.expiresIn,
-        });
-        
-        developer.log('📋 [StampService] Loaded plan: ${planInfo.plan}, Expires: ${planInfo.expiresIn}');
-        return planInfo;
+        return PlanInfo.fromJson(data);
       } else {
         developer.log('❌ [StampService] Failed to load plan info: ${response.statusCode}');
         throw Exception('Failed to load plan info: ${response.statusCode}');
       }
     } catch (e) {
       developer.log('⚠️ [StampService] Error fetching plan info: $e');
-      // Return cached data if available, otherwise return default
-      final cachedData = await HiveService.getCachedDashboardPlanInfo();
-      if (cachedData != null) {
-        return PlanInfo.fromJson(cachedData);
-      }
-      return PlanInfo(plan: 'Free', expirationDate: 'N/A', expiresIn: 'N/A');
+      rethrow;
     }
   }
 
@@ -89,16 +63,6 @@ class StampService {
     developer.log('🔄 [StampService] Starting to fetch recent stamps');
     
     try {
-      // Ensure Hive is initialized
-      await HiveService.ensureInitialized();
-      
-      // Try to get cached data first
-      final cachedData = await HiveService.getCachedDashboardRecentStamps();
-      if (cachedData != null) {
-        developer.log('📦 [StampService] Using cached recent stamps');
-        return cachedData.map((json) => StampActivation.fromJson(json)).toList().cast<StampActivation>();
-      }
-      
       developer.log('🔑 [StampService] Retrieving auth token...');
       final token = await _authService.getJwtToken();
       
@@ -123,10 +87,6 @@ class StampService {
       if (response.statusCode == 200) {
         try {
           final List<dynamic> data = jsonDecode(response.body);
-          
-          // Cache the response
-          await HiveService.saveDashboardRecentStamps(data);
-          
           developer.log('📊 [StampService] Successfully parsed ${data.length} stamp activations');
           return data.map((json) => StampActivation.fromJson(json)).toList();
         } catch (e) {
@@ -141,14 +101,6 @@ class StampService {
       }
     } catch (e) {
       developer.log('❌ [StampService] Error in getRecentStamps: $e');
-      
-      // If there's an error, try to return cached data if available
-      final cachedData = await HiveService.getCachedDashboardRecentStamps();
-      if (cachedData != null) {
-        developer.log('🔄 [StampService] Falling back to cached recent stamps');
-        return cachedData.map((json) => StampActivation.fromJson(json)).toList().cast<StampActivation>();
-      }
-      
       rethrow;
     } finally {
       developer.log('🏁 [StampService] Finished fetch operation');
@@ -159,16 +111,6 @@ class StampService {
     developer.log('🔄 [StampService] Fetching redemption stats');
     
     try {
-      // Ensure Hive is initialized
-      await HiveService.ensureInitialized();
-      
-      // Try to get cached data first
-      final cachedData = await HiveService.getCachedDashboardRedemptions();
-      if (cachedData != null) {
-        developer.log('📦 [StampService] Using cached redemption stats');
-        return cachedData;
-      }
-      
       final token = await _authService.getJwtToken();
       final headers = {
         'Accept': 'application/json',
@@ -191,9 +133,6 @@ class StampService {
         final data = jsonDecode(response.body);
         final result = data['data'] ?? {'total_redemptions': 0};
         
-        // Cache the response
-        await HiveService.saveDashboardRedemptions(result);
-        
         developer.log('📊 [StampService] Redemption stats: $result');
         return result;
       } else {
@@ -202,9 +141,7 @@ class StampService {
       }
     } catch (e) {
       developer.log('❌ [StampService] Error in getRedemptionStats: $e');
-      // Return cached data if available, otherwise return default
-      final cachedData = await HiveService.getCachedDashboardRedemptions();
-      return cachedData ?? {'total_redemptions': 0};
+      return {'total_redemptions': 0};
     }
   }
 
@@ -247,16 +184,6 @@ class StampService {
     developer.log('🔄 [StampService] Fetching total subscribers');
     
     try {
-      // Ensure Hive is initialized
-      await HiveService.ensureInitialized();
-      
-      // Try to get cached data first
-      final cachedData = await HiveService.getCachedDashboardSubscribers();
-      if (cachedData != null) {
-        developer.log('📦 [StampService] Using cached subscribers data');
-        return cachedData;
-      }
-      
       final token = await _authService.getJwtToken();
       final headers = {
         'Accept': 'application/json',
@@ -278,20 +205,20 @@ class StampService {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         
-        // Cache the response
-        await HiveService.saveDashboardSubscribers(data);
-        
-        developer.log('📊 [StampService] Total subscribers: $data');
-        return data;
+        // Extract the data field if it exists, otherwise use the whole response
+        final result = data is Map && data.containsKey('data') 
+            ? data['data'] 
+            : data;
+            
+        developer.log('📊 [StampService] Total subscribers: $result');
+        return result;
       } else {
         developer.log('❌ [StampService] Failed to load total subscribers: ${response.statusCode}');
         return {'total_subscribers': 0};
       }
     } catch (e) {
       developer.log('❌ [StampService] Error in getTotalSubscribers: $e');
-      // Return cached data if available, otherwise return default
-      final cachedData = await HiveService.getCachedDashboardSubscribers();
-      return cachedData ?? {'total_subscribers': 0};
+      return {'total_subscribers': 0};
     }
   }
 }

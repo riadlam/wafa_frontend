@@ -7,6 +7,7 @@ import 'package:loyaltyapp/services/auth_service.dart'
     show AuthService, AuthException;
 import 'package:loyaltyapp/constants/routes.dart';
 import 'dart:developer' as developer;
+import 'package:easy_localization/easy_localization.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -211,7 +212,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      'Welcome to Wafa Family',
+                      'auth.welcome_title'.tr(),
                       style: Theme.of(
                         context,
                       ).textTheme.headlineSmall?.copyWith(
@@ -222,7 +223,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Sign in to continue',
+                      'auth.sign_in_to_continue'.tr(),
                       style: Theme.of(
                         context,
                       ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),

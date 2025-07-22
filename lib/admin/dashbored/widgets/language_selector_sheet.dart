@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LanguageSelectorSheet extends StatefulWidget {
-  const LanguageSelectorSheet({super.key});
+  final Function()? onLanguageChanged;
+  
+  const LanguageSelectorSheet({super.key, this.onLanguageChanged});
 
   @override
   State<LanguageSelectorSheet> createState() => _LanguageSelectorSheetState();
@@ -57,18 +59,26 @@ class _LanguageSelectorSheetState extends State<LanguageSelectorSheet> {
           : null,
       onTap: () async {
         if (!isSelected) {
-          await context.setLocale(Locale(languageCode));
           // Save the selected language preference
           final prefs = await SharedPreferences.getInstance();
           await prefs.setString('language_code', languageCode);
           
-          // Force a rebuild with the new locale
-          if (mounted) {
-            context.setLocale(Locale(languageCode));
+          // Update the locale first
+          await context.setLocale(Locale(languageCode));
+          
+          // Notify parent about the language change
+          if (widget.onLanguageChanged != null) {
+            widget.onLanguageChanged!();
           }
-        }
-        if (mounted) {
-          Navigator.pop(context);
+          
+          // Close the bottom sheet if still mounted
+          if (mounted) {
+            Navigator.pop(context);
+          }
+        } else {
+          if (mounted) {
+            Navigator.pop(context);
+          }
         }
       },
     );

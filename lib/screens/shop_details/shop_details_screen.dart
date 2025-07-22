@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:loyaltyapp/hive_models/hive_service.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:loyaltyapp/models/shop_model.dart';
 import 'package:loyaltyapp/screens/subscribedloyaltycards/models/loyalty_card_model.dart' as ui_model;
 import 'package:loyaltyapp/services/loyalty_card_service.dart';
@@ -314,8 +315,8 @@ class _ShopDetailsScreenState extends State<ShopDetailsScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(_isFavorite 
-          ? 'Added to favorites' 
-          : 'Removed from favorites'),
+          ? 'favorites.added'.tr() 
+          : 'favorites.removed'.tr()),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
@@ -364,7 +365,7 @@ class _ShopDetailsScreenState extends State<ShopDetailsScreen> {
         
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('You have ${updatedCard.activeStamps} active stamps'),
+            content: Text('stamps'.tr(namedArgs: {'count': updatedCard.activeStamps.toString()})),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -372,7 +373,7 @@ class _ShopDetailsScreenState extends State<ShopDetailsScreen> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _errorMessage = 'Failed to refresh card';
+          _errorMessage = 'error.failed_to_refresh'.tr();
         });
       }
     } finally {
@@ -432,11 +433,13 @@ class _ShopDetailsScreenState extends State<ShopDetailsScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Description',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                          Builder(
+                            builder: (context) => Text(
+                              'shop_details.description'.tr(),
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                           const SizedBox(height: 8),
@@ -470,11 +473,13 @@ class _ShopDetailsScreenState extends State<ShopDetailsScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'Location',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                        Builder(
+                          builder: (context) => Text(
+                            'shop_details.location'.tr(),
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 8),
@@ -502,7 +507,9 @@ class _ShopDetailsScreenState extends State<ShopDetailsScreen> {
                                     launchUrl(Uri.parse(url));
                                   },
                                   icon: const Icon(Icons.map),
-                                  label: const Text('View on Map'),
+                                  label: Builder(
+                                    builder: (context) => Text('actions.view_on_map'.tr()),
+                                  ),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.blue[50],
                                     foregroundColor: Colors.blue[700],

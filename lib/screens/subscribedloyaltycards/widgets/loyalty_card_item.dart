@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:loyaltyapp/screens/subscribedloyaltycards/models/loyalty_card_model.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'dart:math' as math;
@@ -338,7 +339,12 @@ class LoyaltyCardItem extends StatelessWidget {
                         ),
                         const SizedBox(height: 6),  // Reduced spacing
                         Text(
-                          '${card.earnedStamps} of ${card.totalStamps} stamps',
+                          'loyalty_cards.stamps_count'.tr(
+                            namedArgs: {
+                              'earned': card.earnedStamps.toString(),
+                              'total': card.totalStamps.toString(),
+                            },
+                          ),
                           style: TextStyle(
                             fontSize: 12,  // Slightly smaller font
                             color: card.textColor.withOpacity(0.95),
@@ -355,7 +361,7 @@ class LoyaltyCardItem extends StatelessWidget {
                         ),
                         const SizedBox(height: 2),  // Reduced spacing
                         Text(
-                          'Tap to flip',
+                          'loyalty_cards.tap_to_flip'.tr(),
                           style: TextStyle(
                             fontSize: 10,
                             color: card.textColor.withOpacity(0.7),

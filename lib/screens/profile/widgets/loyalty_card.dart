@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:loyaltyapp/constants/app_colors.dart';
 import '../../../../providers/user_provider.dart';
 
@@ -22,7 +23,7 @@ class LoyaltyCard extends StatelessWidget {
     if (userProvider.error != null) {
       return Center(
         child: Text(
-          'Error loading user data',
+          'profile.error_loading'.tr(),
           style: GoogleFonts.poppins(color: AppColors.textPrimary),
         ),
       );
@@ -89,7 +90,7 @@ class LoyaltyCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Premium Member',
+                        'loyalty_cards.premium_member'.tr(),
                         style: GoogleFonts.poppins(
                           color: Colors.white,
                           fontSize: 14,
@@ -103,7 +104,7 @@ class LoyaltyCard extends StatelessWidget {
                   
                   const SizedBox(height: 8),
                   Text(
-                    'Scan to earn points',
+                    'loyalty_cards.scan_to_earn'.tr(),
                     style: GoogleFonts.poppins(
                       color: Colors.white,
                       fontSize: 20,
@@ -152,7 +153,7 @@ class LoyaltyCard extends StatelessWidget {
                         ),
                         const SizedBox(height: 12),
                         Text(
-                          'Show this code at checkout',
+                          'loyalty_cards.show_code'.tr(),
                           style: GoogleFonts.roboto(
                             color: AppColors.primary,
                             fontSize: 12,

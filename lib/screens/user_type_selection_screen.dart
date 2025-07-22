@@ -4,6 +4,7 @@ import 'package:loyaltyapp/constants/routes.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:loyaltyapp/services/auth_service.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'subscription/index.dart';
 
 class UserTypeSelectionScreen extends StatefulWidget {
@@ -209,18 +210,15 @@ class _UserTypeSelectionScreenState extends State<UserTypeSelectionScreen> {
           await showDialog(
             context: context,
             builder: (context) => AlertDialog(
-              title: const Text('Location Permission Required'),
-              content: const Text(
-                'Location permission is required to show nearby shops and offers.\n\n'
-                'Please enable it in your device settings to continue.',
-              ),
+              title: Text('userTypeSelection.locationPermissionRequired'.tr()),
+              content: Text('userTypeSelection.locationPermissionMessage'.tr()),
               actions: [
                 TextButton(
                   onPressed: () {
                     Navigator.pop(context);
                     setState(() => _isLoading = false);
                   },
-                  child: const Text('OK'),
+                  child: Text('userTypeSelection.ok'.tr()),
                 ),
               ],
             ),
@@ -239,18 +237,15 @@ class _UserTypeSelectionScreenState extends State<UserTypeSelectionScreen> {
         await showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: const Text('Location Permission Permanently Denied'),
-            content: const Text(
-              'Location permissions are permanently denied.\n\n'
-              'Please enable them in your device settings to continue.',
-            ),
+            title: Text('userTypeSelection.locationDeniedForever'.tr()),
+            content: Text('userTypeSelection.locationDeniedMessage'.tr()),
             actions: [
               TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                   setState(() => _isLoading = false);
                 },
-                child: const Text('Cancel'),
+                child: Text('userTypeSelection.cancel'.tr()),
               ),
               TextButton(
                 onPressed: () {
@@ -258,7 +253,7 @@ class _UserTypeSelectionScreenState extends State<UserTypeSelectionScreen> {
                   Navigator.pop(context);
                   setState(() => _isLoading = false);
                 },
-                child: const Text('Open Settings'),
+                child: Text('userTypeSelection.openSettings'.tr()),
               ),
             ],
           ),
@@ -280,7 +275,12 @@ class _UserTypeSelectionScreenState extends State<UserTypeSelectionScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Location found: ${position.latitude.toStringAsFixed(4)}, ${position.longitude.toStringAsFixed(4)}'),
+              content: Text('userTypeSelection.locationFound'.tr(
+                namedArgs: {
+                  'latitude': position.latitude.toStringAsFixed(4),
+                  'longitude': position.longitude.toStringAsFixed(4)
+                }
+              )),
               duration: const Duration(seconds: 3),
             ),
           );
@@ -294,8 +294,8 @@ class _UserTypeSelectionScreenState extends State<UserTypeSelectionScreen> {
         print('Error getting location: $e');
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Could not get your location. Using default location.'),
+            SnackBar(
+              content: Text('userTypeSelection.locationError'.tr()),
               duration: Duration(seconds: 3),
             ),
           );
@@ -437,7 +437,7 @@ class _UserTypeSelectionScreenState extends State<UserTypeSelectionScreen> {
       children: [
         Scaffold(
           appBar: AppBar(
-            title: const Text('Select User Type'),
+            title: Text('userTypeSelection.title'.tr()),
             centerTitle: true,
           ),
           body: Padding(
@@ -466,15 +466,18 @@ class _UserTypeSelectionScreenState extends State<UserTypeSelectionScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const Column(
+                  child: Column(
                     children: [
                       Icon(Icons.person, size: 50),
                       SizedBox(height: 10),
                       Text(
-                        'Regular User',
+                        'userTypeSelection.regularUser'.tr(),
                         style: TextStyle(fontSize: 20),
                       ),
-                      Text('Access app features as a customer'),
+                      Text(
+                        'userTypeSelection.regularUserDescription'.tr(),
+                        textAlign: TextAlign.center,
+                      ),
                     ],
                   ),
                 ),
@@ -501,15 +504,18 @@ class _UserTypeSelectionScreenState extends State<UserTypeSelectionScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const Column(
+                  child: Column(
                     children: [
                       Icon(Icons.store, size: 50),
                       SizedBox(height: 10),
                       Text(
-                        'Shop Owner',
+                        'userTypeSelection.shopOwner'.tr(),
                         style: TextStyle(fontSize: 20),
                       ),
-                      Text('Manage your business and rewards'),
+                      Text(
+                        'userTypeSelection.shopOwnerDescription'.tr(),
+                        textAlign: TextAlign.center,
+                      ),
                     ],
                   ),
                 ),
@@ -520,7 +526,7 @@ class _UserTypeSelectionScreenState extends State<UserTypeSelectionScreen> {
         if (_isLoading)
           Container(
             color: Colors.black54,
-            child: const Center(
+            child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -530,7 +536,7 @@ class _UserTypeSelectionScreenState extends State<UserTypeSelectionScreen> {
                   ),
                   SizedBox(height: 20),
                   Text(
-                    'Loading...',
+                    'userTypeSelection.loading'.tr(),
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 18,

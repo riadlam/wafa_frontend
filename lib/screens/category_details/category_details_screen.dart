@@ -1,5 +1,6 @@
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:loyaltyapp/models/shop_model.dart';
 import 'package:loyaltyapp/services/category_service.dart';
 import 'package:loyaltyapp/screens/category_details/widgets/category_banner.dart';
@@ -103,7 +104,7 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
                               vertical: 8,
                             ),
                             child: Text(
-                              'Select Wilaya',
+                              'select_wilaya'.tr(),
                               style: GoogleFonts.roboto(
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
@@ -120,7 +121,7 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
                               itemBuilder: (context, index) {
                                 if (index == 0) {
                                   return ListTile(
-                                    title: const Text('All Wilayas'),
+                                    title: Text('all_wilayas'.tr()),
                                     onTap: () {
                                       setState(() {
                                         _selectedWilaya = null;
@@ -192,7 +193,7 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
       });
     } catch (e) {
       setState(() {
-        _error = 'Failed to load shops. Please try again.';
+        _error = 'error.failed_to_load'.tr();
         _isLoading = false;
       });
     }
@@ -228,7 +229,7 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
                       ),
                       if (_isFilteringByWilaya && _selectedWilaya != null)
                         Text(
-                          'Filtered by: $_selectedWilaya',
+                          'filtered_by'.tr(namedArgs: {'wilaya': _selectedWilaya ?? ''}),
                           style: const TextStyle(
                             color: Colors.white70,
                             fontSize: 12,
@@ -265,13 +266,13 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
   String _getSortOptionText(ShopSortOption option) {
     switch (option) {
       case ShopSortOption.nearestFirst:
-        return 'Nearest First';
+        return 'sort_options.nearest_first'.tr();
       case ShopSortOption.farthestFirst:
-        return 'Farthest First';
+        return 'sort_options.farthest_first'.tr();
       case ShopSortOption.aToZ:
-        return 'A to Z';
+        return 'sort_options.a_to_z'.tr();
       case ShopSortOption.zToA:
-        return 'Z to A';
+        return 'sort_options.z_to_a'.tr();
     }
   }
 
@@ -389,7 +390,7 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
                   ),
                   elevation: 2,
                 ),
-                child: const Text('Try Again'),
+                child: Text('actions.try_again'.tr()),
               ),
             ],
           ),
@@ -407,7 +408,7 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
         if (snapshot.hasError || !snapshot.hasData) {
           return Center(
             child: Text(
-              'No shops available',
+              'error.no_shops_available'.tr(),
               style: GoogleFonts.roboto(fontSize: 16, color: Colors.black54),
             ),
           );
@@ -426,7 +427,7 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'No shops found in this category',
+                  'error.no_shops_found'.tr(),
                   style: GoogleFonts.roboto(
                     fontSize: 16,
                     color: Colors.black54,
@@ -504,7 +505,7 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
-                                  _selectedWilaya ?? 'Filter by Wilaya',
+                                  _selectedWilaya ?? 'actions.filter_by_wilaya'.tr(),
                                   style: GoogleFonts.roboto(
                                     fontSize: 14,
                                     color: Colors.black87,

@@ -11,6 +11,7 @@ import '../../constants/app_colors.dart';
 import 'widgets/profile_header.dart';
 import 'widgets/loyalty_card.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ProfileTab extends StatefulWidget {
   const ProfileTab({super.key});
@@ -20,7 +21,7 @@ class ProfileTab extends StatefulWidget {
 }
 
 class _ProfileTabState extends State<ProfileTab> {
-  String _lastMessage = 'No messages received yet';
+  String _lastMessage = 'profile.messages.no_messages'.tr();
   bool _isConnected = false;
   // Error state is handled by the WebSocket provider
 
@@ -65,7 +66,7 @@ class _ProfileTabState extends State<ProfileTab> {
           setState(() {
             _isConnected = false;
           });
-          _showMessageDialog('Authentication required');
+          _showMessageDialog('profile.authentication_required'.tr());
         }
         return;
       }
@@ -84,7 +85,7 @@ class _ProfileTabState extends State<ProfileTab> {
     } catch (e) {
       if (kDebugMode) print('Error initializing WebSocket: $e');
       if (mounted) {
-        _showErrorDialog('Failed to initialize WebSocket connection');
+        _showErrorDialog('profile.connection.failed'.tr());
       }
     }
   }
@@ -142,6 +143,7 @@ class _ProfileTabState extends State<ProfileTab> {
       'rewards': '8',
       'visits': '24',
     };
+    
 
     return Scaffold(
       body: Column(
@@ -176,11 +178,11 @@ class _ProfileTabState extends State<ProfileTab> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        _buildStatCard('Points', stats['points'], Icons.star_rate_rounded),
+                        _buildStatCard('profile.points'.tr(), stats['points'], Icons.star_rate_rounded),
                         const SizedBox(width: 12),
-                        _buildStatCard('Rewards', stats['rewards'], Icons.card_giftcard_rounded),
+                        _buildStatCard('profile.rewards'.tr(), stats['rewards'], Icons.card_giftcard_rounded),
                         const SizedBox(width: 12),
-                        _buildStatCard('Visits', stats['visits'], Icons.store_rounded),
+                        _buildStatCard('profile.visits'.tr(), stats['visits'], Icons.store_rounded),
                       ],
                     ),
                   ),
@@ -191,7 +193,7 @@ class _ProfileTabState extends State<ProfileTab> {
                     child: Column(
                       children: [
                         Text(
-                          'Your QR Code',
+                          'loyalty_cards.qr_code'.tr(),
                           style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                 color: AppColors.primary,
                                 fontWeight: FontWeight.bold,

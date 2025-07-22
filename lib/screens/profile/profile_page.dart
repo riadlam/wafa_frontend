@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:loyaltyapp/screens/profile/message_popup_screen.dart';
@@ -98,7 +99,7 @@ class _ProfilePageState extends State<ProfilePage> {
       final token = await authService.getJwtToken();
       if (token == null) {
         if (mounted) {
-          _showMessageDialog('Authentication required. Please log in again.');
+          _showMessageDialog('profile.authentication_error'.tr());
         }
         return;
       }
@@ -165,7 +166,7 @@ class _ProfilePageState extends State<ProfilePage> {
       'visits': '24',
     };
     
-    final connectionStatus = _isConnected ? 'Connected' : 'Disconnected';
+    final connectionStatus = _isConnected ? 'profile.connection.connected'.tr() : 'profile.connection.disconnected'.tr();
     final statusColor = _isConnected ? Colors.green : Colors.red;
 
     return Scaffold(
@@ -173,9 +174,9 @@ class _ProfilePageState extends State<ProfilePage> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: const Text(
-          'Profile',
-          style: TextStyle(
+        title: Text(
+          'profile.title'.tr(),
+          style: const TextStyle(
             color: Colors.black87,
             fontSize: 24,
             fontWeight: FontWeight.bold,

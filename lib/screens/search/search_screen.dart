@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:loyaltyapp/models/category_model.dart';
 import 'package:loyaltyapp/screens/category_details/category_details_screen.dart';
 import 'package:loyaltyapp/utils/custom_page_route.dart';
@@ -96,7 +97,7 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
-        title: 'Search',
+        title: 'search.title'.tr(),
         onSearchIconTap: () {
           // Optionally, focus the search field or trigger search logic
         },
@@ -123,11 +124,12 @@ class _SearchScreenState extends State<SearchScreen> {
       child: TextField(
         controller: _searchController,
         decoration: InputDecoration(
-          hintText: 'Search for shops...',
+          hintText: 'search.hint'.tr(),
           border: InputBorder.none,
           prefixIcon: const Icon(Icons.search, size: 20),
           suffixIcon: _searchController.text.isNotEmpty
               ? IconButton(
+                  tooltip: 'search.clear_search'.tr(),
                   icon: const Icon(Icons.close, size: 20),
                   onPressed: () {
                     _searchController.clear();
@@ -231,7 +233,7 @@ class _SearchScreenState extends State<SearchScreen> {
             const Icon(Icons.error_outline, size: 48, color: Colors.red),
             const SizedBox(height: 16),
             Text(
-              'Error loading categories',
+              'search.error_loading_categories'.tr(),
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 8),
@@ -243,7 +245,7 @@ class _SearchScreenState extends State<SearchScreen> {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: _loadCategories,
-              child: const Text('Retry'),
+              child: Text('search.retry'.tr()),
             ),
           ],
         ),
@@ -263,7 +265,7 @@ class _SearchScreenState extends State<SearchScreen> {
             children: [
               const SizedBox(height: 16),
               Text(
-                'Loading...',
+                'search.loading'.tr(),
                 style: Theme.of(context).textTheme.titleMedium,
               ),
             ],
@@ -283,12 +285,12 @@ class _SearchScreenState extends State<SearchScreen> {
               ),
               const SizedBox(height: 16),
               Text(
-                'No results found',
+                'search.no_results'.tr(),
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               const SizedBox(height: 8),
               Text(
-                'Try different keywords or check your spelling',
+                'search.no_results_message'.tr(),
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Theme.of(context).hintColor,
                 ),
@@ -339,7 +341,7 @@ class _SearchScreenState extends State<SearchScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Categories',
+          'search.categories'.tr(),
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.bold,
           ),
@@ -379,7 +381,7 @@ class _SearchScreenState extends State<SearchScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Recent Searches',
+          'search.recent_searches'.tr(),
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold,
           ),

@@ -1,8 +1,9 @@
-import 'dart:developer' as developer;
+import 'dart:developer' as dev;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:provider/provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../../constants/app_colors.dart';
 import '../../../../providers/user_provider.dart';
 
@@ -13,11 +14,11 @@ class ProfileHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    developer.log('[$_logTag] Building ProfileHeader', name: _logTag);
+    dev.log('[$_logTag] Building ProfileHeader', name: _logTag);
     final userProvider = Provider.of<UserProvider>(context);
     
     if (userProvider.isLoading) {
-      developer.log('[$_logTag] Loading user data...', name: _logTag);
+      dev.log('[$_logTag] Loading user data...', name: _logTag);
       return const Center(
         child: CircularProgressIndicator(
           valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
@@ -26,12 +27,12 @@ class ProfileHeader extends StatelessWidget {
     }
     
     if (userProvider.error != null) {
-      developer.log('[$_logTag] Error loading user: ${userProvider.error}', 
-                   name: _logTag, 
-                   error: userProvider.error);
+      dev.log('[$_logTag] Error loading user: ${userProvider.error}', 
+             name: _logTag, 
+             error: userProvider.error);
       return Center(
         child: Text(
-          'Error loading profile: ${userProvider.error}',
+          '${'profile.error_loading'.tr()}: ${userProvider.error}',
           style: GoogleFonts.poppins(color: Colors.white),
         ),
       );
@@ -39,10 +40,10 @@ class ProfileHeader extends StatelessWidget {
     
     final user = userProvider.user;
     
-    developer.log('[$_logTag] User data: ${user?.toJson()}', name: _logTag);
+    dev.log('[$_logTag] User data: ${user?.toJson()}', name: _logTag);
     
     if (user == null) {
-      developer.log('[$_logTag] No user data available', name: _logTag);
+      dev.log('[$_logTag] No user data available', name: _logTag);
     }
     
     return Container(
@@ -111,7 +112,7 @@ class ProfileHeader extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  user?.name ?? 'Guest User',
+                  user?.name ?? 'profile.guest_user'.tr(),
                   style: GoogleFonts.poppins(
                     color: Colors.white,
                     fontSize: 20,
@@ -123,7 +124,7 @@ class ProfileHeader extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  user?.email ?? 'No email available',
+                  user?.email ?? 'profile.no_email'.tr(),
                   style: GoogleFonts.poppins(
                     color: Colors.white.withOpacity(0.9),
                     fontSize: 14,

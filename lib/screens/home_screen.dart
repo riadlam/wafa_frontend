@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:loyaltyapp/constants/custom_app_bar.dart';
 import 'package:loyaltyapp/widgets/animated_screen_transition.dart';
 import 'package:loyaltyapp/widgets/custom_bottom_nav_bar.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class HomeScreen extends StatefulWidget {
   final int selectedTab;
@@ -119,7 +120,7 @@ class HomeTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(title: 'Explore'),
+      appBar: CustomAppBar(title: 'home.explore'.tr()),
       body: const SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

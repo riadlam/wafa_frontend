@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:loyaltyapp/screens/subscribedloyaltycards/models/loyalty_card_model.dart';
 
@@ -42,10 +43,7 @@ class LoyaltyCardBack extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: Colors.white.withOpacity(0.3),
-            width: 1.5,
-          ),
+          border: Border.all(color: Colors.white.withOpacity(0.3), width: 1.5),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.2),
@@ -83,7 +81,7 @@ class LoyaltyCardBack extends StatelessWidget {
               blurRadius: 10,
               spreadRadius: 1,
               offset: const Offset(0, 4),
-            )
+            ),
           ],
         ),
         child: Stack(
@@ -94,7 +92,10 @@ class LoyaltyCardBack extends StatelessWidget {
             _buildEmbossedEdge(),
             // Content
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 8.0,
+              ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -108,7 +109,9 @@ class LoyaltyCardBack extends StatelessWidget {
                         child: Container(
                           width: 120,
                           height: 120,
-                          margin: const EdgeInsets.only(bottom: 12), // Reduced bottom margin
+                          margin: const EdgeInsets.only(
+                            bottom: 12,
+                          ), // Reduced bottom margin
                           decoration: BoxDecoration(
                             color: Colors.white.withOpacity(0.2),
                             borderRadius: BorderRadius.circular(16),
@@ -130,9 +133,12 @@ class LoyaltyCardBack extends StatelessWidget {
                     height: 32, // Reduced height for the text section
                     child: Center(
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8.0,
+                          vertical: 2.0,
+                        ),
                         child: Text(
-                          'Swipe or tap to flip back',
+                          'loyalty_cards.swipe_or_tap_to_flip_back'.tr(),
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 12,
@@ -143,21 +149,18 @@ class LoyaltyCardBack extends StatelessWidget {
                       ),
                     ),
                   ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ));
+    );
   }
 
   Widget _buildLogoImage(BuildContext context) {
     if (card.imageUrl == null || card.imageUrl!.isEmpty) {
-      return Icon(
-        Icons.business,
-        size: 48,
-        color: textColor,
-      );
+      return Icon(Icons.business, size: 48, color: textColor);
     }
 
     // Check if this is a local file path (starts with file://)
@@ -179,20 +182,17 @@ class LoyaltyCardBack extends StatelessWidget {
     return CachedNetworkImage(
       imageUrl: card.imageUrl!,
       fit: BoxFit.contain,
-      placeholder: (context, url) => Center(
-        child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(textColor),
-        ),
-      ),
+      placeholder:
+          (context, url) => Center(
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(textColor),
+            ),
+          ),
       errorWidget: (context, url, error) => _buildErrorIcon(),
     );
   }
 
   Widget _buildErrorIcon() {
-    return Icon(
-      Icons.business,
-      size: 48,
-      color: textColor,
-    );
+    return Icon(Icons.business, size: 48, color: textColor);
   }
 }

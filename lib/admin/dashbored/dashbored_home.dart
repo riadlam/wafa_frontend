@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:loyaltyapp/constants/app_colors.dart';
 import 'package:loyaltyapp/services/stamp_service.dart';
 import 'package:loyaltyapp/providers/loyalty_card_provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:provider/provider.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'dart:io';
@@ -294,7 +295,7 @@ class _DashboardContentState extends State<_DashboardContent> {
               ),
             ),
             Text(
-              'Today’s reward rundown',
+              'dashboard.todays_reward_rundown'.tr(),
               style: GoogleFonts.inter(
                 fontSize: 12,
                 color: Colors.white.withOpacity(0.9),
@@ -352,7 +353,7 @@ class _DashboardContentState extends State<_DashboardContent> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25),
                 child: _buildSectionHeader(
-                  'Recent Stamp Activations',
+                  'dashboard.recent_stamp_activations'.tr(),
                   onViewAll: () {},
                 ),
               ),
@@ -402,7 +403,7 @@ class _DashboardContentState extends State<_DashboardContent> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'My Loyalty Card',
+                        'dashboard.my_loyalty_card'.tr(),
                         style: GoogleFonts.poppins(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -448,7 +449,7 @@ class _DashboardContentState extends State<_DashboardContent> {
                 Icon(Icons.edit, size: 14, color: AppColors.primary),
                 const SizedBox(width: 4),
                 Text(
-                  'Edit Card',
+                  'dashboard.edit_card'.tr(),
                   style: GoogleFonts.inter(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
@@ -546,17 +547,21 @@ class _DashboardContentState extends State<_DashboardContent> {
 
               // Show success message
               if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Card updated successfully')),
+                final snackBar = SnackBar(
+                  content: Text('dashboard.card_updated'.tr()),
                 );
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
               }
             } catch (e) {
               if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Error updating card: ${e.toString()}'),
+                final errorSnackBar = SnackBar(
+                  content: Text(
+                    'dashboard.error_updating_card'.tr(
+                      namedArgs: {'error': e.toString()},
+                    ),
                   ),
                 );
+                ScaffoldMessenger.of(context).showSnackBar(errorSnackBar);
               }
             }
           },
@@ -571,11 +576,11 @@ class _DashboardContentState extends State<_DashboardContent> {
       builder:
           (context) => AlertDialog(
             title: Text(
-              'Delete Loyalty Card',
+              'dashboard.delete_loyalty_card'.tr(),
               style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
             ),
             content: Text(
-              'Are you sure you want to delete this loyalty card? This action cannot be undone.',
+              'dashboard.delete_confirmation'.tr(),
               style: GoogleFonts.inter(),
             ),
             actions: [
@@ -585,7 +590,7 @@ class _DashboardContentState extends State<_DashboardContent> {
                   foregroundColor: const Color(0xFF64748B),
                 ),
                 child: Text(
-                  'CANCEL',
+                  'dashboard.cancel'.tr(),
                   style: GoogleFonts.inter(fontWeight: FontWeight.w600),
                 ),
               ),
@@ -596,7 +601,7 @@ class _DashboardContentState extends State<_DashboardContent> {
                   ScaffoldMessenger.of(dialogContext).showSnackBar(
                     SnackBar(
                       content: Text(
-                        'Loyalty card deleted',
+                        'dashboard.card_deleted'.tr(),
                         style: GoogleFonts.inter(),
                       ),
                       behavior: SnackBarBehavior.floating,
@@ -610,7 +615,7 @@ class _DashboardContentState extends State<_DashboardContent> {
                   foregroundColor: custom_colors.AppColors.primary,
                 ),
                 child: Text(
-                  'DELETE',
+                  'dashboard.delete'.tr(),
                   style: GoogleFonts.inter(fontWeight: FontWeight.w600),
                 ),
               ),
@@ -649,12 +654,11 @@ class _DashboardContentState extends State<_DashboardContent> {
           childAspectRatio: 1.2,
           children: [
             _buildStatCard(
-              'Total Subscribers',
+              'dashboard.total_subscribers'.tr(),
               subscribers,
               Icons.people_alt_outlined,
               const Color(0xFF6366F1),
-              infoText:
-                  'Total number of customers subscribed to your loyalty program.',
+              infoText: 'dashboard.subscribers_info'.tr(),
             ),
             FutureBuilder<PlanInfo>(
               future: _planInfoFuture,
@@ -675,20 +679,19 @@ class _DashboardContentState extends State<_DashboardContent> {
                   );
                 }
                 return _buildStatCard(
-                  'Plan',
-                  'Loading...',
+                  'dashboard.plan'.tr(),
+                  'dashboard.loading'.tr(),
                   Icons.verified_user_outlined,
                   _successColor,
                 );
               },
             ),
             _buildStatCard(
-              'Redemptions',
+              'dashboard.redemptions'.tr(),
               redemptions,
               Icons.card_giftcard_outlined,
               _warningColor,
-              infoText:
-                  'Number of rewards redeemed by your customers this month.',
+              infoText: 'dashboard.redemptions_info'.tr(),
             ),
             // Pending Payment card
             FutureBuilder<dynamic>(
@@ -697,7 +700,7 @@ class _DashboardContentState extends State<_DashboardContent> {
                 // Show loading state
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return _buildStatCard(
-                    'Pending Payment',
+                    'dashboard.pending_payment'.tr(),
                     '...',
                     Icons.payments_outlined,
                     const Color(0xFF8B5CF6),
@@ -707,11 +710,11 @@ class _DashboardContentState extends State<_DashboardContent> {
                 // Show error state
                 if (snapshot.hasError) {
                   return _buildStatCard(
-                    'Pending Payment',
+                    'dashboard.pending_payment'.tr(),
                     'Error',
                     Icons.error_outline,
                     Colors.red[300]!,
-                    infoText: 'Failed to load pending payment',
+                    infoText: 'dashboard.error_loading_payment'.tr(),
                   );
                 }
 
@@ -746,11 +749,11 @@ class _DashboardContentState extends State<_DashboardContent> {
                 );
 
                 return _buildStatCard(
-                  'Pending Payment',
+                  'dashboard.pending_payment'.tr(),
                   pendingAmount,
                   Icons.payments_outlined,
                   const Color(0xFF8B5CF6),
-                  infoText: 'Total amount pending from unredeemed rewards.',
+                  infoText: 'dashboard.payment_info'.tr(),
                 );
               },
             ),
@@ -805,8 +808,8 @@ class _DashboardContentState extends State<_DashboardContent> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      child: const Text(
-                        'Upgrade/Renew Plan',
+                      child: Text(
+                        'dashboard.upgrade_renew_plan'.tr(),
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w600,
@@ -824,7 +827,7 @@ class _DashboardContentState extends State<_DashboardContent> {
                       TextButton(
                         onPressed: () => Navigator.of(context).pop(),
                         child: Text(
-                          'Got it',
+                          'dashboard.got_it'.tr(),
                           style: GoogleFonts.inter(
                             color: _primaryColor,
                             fontWeight: FontWeight.w600,
@@ -928,23 +931,6 @@ class _DashboardContentState extends State<_DashboardContent> {
             color: const Color(0xFF1E293B),
           ),
         ),
-        if (onViewAll != null)
-          TextButton(
-            onPressed: onViewAll,
-            style: TextButton.styleFrom(
-              padding: EdgeInsets.zero,
-              minimumSize: const Size(0, 0),
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            ),
-            child: Text(
-              'View All',
-              style: GoogleFonts.inter(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: _primaryColor,
-              ),
-            ),
-          ),
       ],
     );
   }
@@ -960,7 +946,7 @@ class _DashboardContentState extends State<_DashboardContent> {
             Expanded(
               child: _buildActionButton(
                 icon: Icons.add_circle_outline_rounded,
-                label: 'Add Reward',
+                label: 'dashboard.add_reward'.tr(),
                 onTap: () {},
                 color: const Color(0xFF6366F1),
               ),
@@ -969,7 +955,7 @@ class _DashboardContentState extends State<_DashboardContent> {
             Expanded(
               child: _buildActionButton(
                 icon: Icons.bar_chart_rounded,
-                label: 'Analytics',
+                label: 'dashboard.analytics'.tr(),
                 onTap: () {},
                 color: const Color(0xFF10B981),
               ),
@@ -978,7 +964,7 @@ class _DashboardContentState extends State<_DashboardContent> {
             Expanded(
               child: _buildActionButton(
                 icon: Icons.mail_outline_rounded,
-                label: 'Campaigns',
+                label: 'dashboard.campaigns'.tr(),
                 onTap: () {},
                 color: const Color(0xFFF59E0B),
               ),
@@ -1098,7 +1084,7 @@ class _DashboardContentState extends State<_DashboardContent> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Need help with your loyalty program?',
+                  'dashboard.help_title'.tr(),
                   style: GoogleFonts.poppins(
                     color: _primaryDarkColor,
                     fontSize: 24,
@@ -1108,7 +1094,7 @@ class _DashboardContentState extends State<_DashboardContent> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Our support team is here to help you get the most out of your loyalty program.',
+                  'dashboard.help_subtitle'.tr(),
                   style: GoogleFonts.inter(color: Colors.black, fontSize: 12),
                 ),
                 const SizedBox(height: 16),
@@ -1128,7 +1114,7 @@ class _DashboardContentState extends State<_DashboardContent> {
                     elevation: 0,
                   ),
                   child: Text(
-                    'Contact Support',
+                    'dashboard.contact_support'.tr(),
                     style: GoogleFonts.inter(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:loyaltyapp/constants/custom_app_bar.dart';
 import 'package:loyaltyapp/screens/subscribedloyaltycards/models/user_loyalty_cards_response.dart';
 import 'package:loyaltyapp/screens/subscribedloyaltycards/models/loyalty_card_model.dart';
@@ -37,7 +38,7 @@ class _SbscribedLoyaltyCardsState extends State<SbscribedLoyaltyCards> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(title: 'My Cards'),
+      appBar: CustomAppBar(title: 'loyalty_cards.my_cards'.tr()),
       body: FutureBuilder<UserLoyaltyCardsResponse>(
         future: _loyaltyCardsFuture,
         builder: (context, snapshot) {

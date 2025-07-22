@@ -29,6 +29,13 @@ class AuthService {
   static const String _userPhotoKey = 'user_photo';
   static const String _userRoleKey = 'user_role';
   
+  // Public getters for storage keys
+  String get tokenKey => _tokenKey;
+  String get userEmailKey => _userEmailKey;
+  String get userNameKey => _userNameKey;
+  String get userPhotoKey => _userPhotoKey;
+  String get userRoleKey => _userRoleKey;
+  
   // Firebase Auth instance
   final FirebaseAuth _auth;
   
@@ -440,10 +447,54 @@ class AuthService {
     return prefs.getString(_userEmailKey);
   }
   
-  // Get user name
-  Future<String?> get userName async {
-    final prefs = await this.prefs;
-    return prefs.getString(_userNameKey);
+  // Get current user's name
+  Future<String?> getUserName() async {
+    _prefs ??= await SharedPreferences.getInstance();
+    return _prefs!.getString(_userNameKey);
+  }
+  
+  // Update user info
+  Future<void> updateUserInfo({
+    required String email,
+    required String name,
+    required String photoUrl,
+    String role = 'user',
+  }) async {
+    await _saveUserInfo(
+      email: email,
+      name: name,
+      photoUrl: photoUrl,
+      role: role,
+    );
+  }
+  
+  // Fetch and update user data from the server
+  Future<void> fetchUser() async {
+    try {
+      final token = await getJwtToken();
+      if (token == null) return;
+      
+      final response = await http.get(
+        Uri.parse('http://192.168.1.15:8000/api/user'),
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+      
+      if (response.statusCode == 200) {
+        final userData = jsonDecode(utf8.decode(response.bodyBytes));
+        await _saveUserInfo(
+          email: userData['email'] ?? '',
+          name: userData['name'] ?? '',
+          photoUrl: userData['profile_photo_url'] ?? '',
+          role: userData['role'] ?? 'user',
+        );
+      }
+    } catch (e) {
+      _logger.e('Error fetching user data: $e');
+      rethrow;
+    }
   }
   
   // Get user photo URL

@@ -132,8 +132,8 @@ class _SplashScreenState extends State<SplashScreen>
           children: [
             // App logo
             Container(
-              width: 250,
-              height: 250,
+              width: 300,
+              height: 300,
               decoration: const BoxDecoration(
                 color: Colors.transparent,
               ),

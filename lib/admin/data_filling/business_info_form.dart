@@ -5,6 +5,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
+import 'package:easy_localization/easy_localization.dart';
 
 class BusinessInfoForm extends StatefulWidget {
   final VoidCallback onNext;
@@ -87,7 +88,7 @@ class _BusinessInfoFormState extends State<BusinessInfoForm> with TickerProvider
     if (_currentLocation == null) {
       setState(() {
         _isLoading = false;
-        _locationError = 'Could not determine your location. Please try again or set it manually.';
+        _locationError = 'business_info.location_error'.tr();
       });
     }
   }
@@ -204,7 +205,7 @@ class _BusinessInfoFormState extends State<BusinessInfoForm> with TickerProvider
         if (permission != LocationPermission.whileInUse && 
             permission != LocationPermission.always) {
           setState(() {
-            _locationError = 'Location permission is required to continue';
+            _locationError = 'business_info.location_permission_denied'.tr();
             _isLoading = false;
           });
           return;
@@ -212,7 +213,7 @@ class _BusinessInfoFormState extends State<BusinessInfoForm> with TickerProvider
       }
 
       if (permission == LocationPermission.deniedForever) {
-        final errorMsg = 'Location permissions are permanently denied. Please enable them in app settings.';
+        final errorMsg = 'business_info.location_permission_denied_forever'.tr();
         print('❌ $errorMsg');
         setState(() {
           _locationError = errorMsg;
@@ -262,7 +263,7 @@ class _BusinessInfoFormState extends State<BusinessInfoForm> with TickerProvider
       
       if (mounted) {
         setState(() {
-          _locationError = 'Could not get your location. Please check your connection and try again.';
+          _locationError = 'business_info.location_error_generic'.tr();
           _isLoading = false;
           _isLocating = false;
         });
@@ -284,7 +285,7 @@ class _BusinessInfoFormState extends State<BusinessInfoForm> with TickerProvider
       _currentLocation = point;
       _pendingLocation = point;
       // Clear previous address while loading new one
-      _address = 'Getting address...';
+      _address = 'business_info.getting_location'.tr();
       _wilaya = '';
       _daira = '';
     });
@@ -350,14 +351,14 @@ class _BusinessInfoFormState extends State<BusinessInfoForm> with TickerProvider
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Text(
-            'Business Location',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          Text(
+            'business_info.title'.tr(),
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
-          const Text(
-            'Please confirm your business location on the map',
-            style: TextStyle(color: Colors.grey, fontSize: 14),
+          Text(
+            'business_info.subtitle'.tr(),
+            style: const TextStyle(color: Colors.grey, fontSize: 14),
           ),
           const SizedBox(height: 24),
           
@@ -387,10 +388,10 @@ class _BusinessInfoFormState extends State<BusinessInfoForm> with TickerProvider
                                 ),
                                 const SizedBox(height: 24),
                                 if (_locationError.contains('permissions'))
-                                  const Padding(
-                                    padding: EdgeInsets.symmetric(horizontal: 20.0),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
                                     child: Text(
-                                      'Please enable location permissions in your device settings to continue.',
+                                      'business_info.permission_required'.tr(),
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                         color: Colors.black54,
@@ -401,7 +402,7 @@ class _BusinessInfoFormState extends State<BusinessInfoForm> with TickerProvider
                                 ElevatedButton.icon(
                                   onPressed: _getCurrentLocation,
                                   icon: const Icon(Icons.refresh),
-                                  label: const Text('Try Again'),
+                                  label: Text('business_info.try_again'.tr()),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.grey[200],
                                     foregroundColor: Colors.black87,
@@ -528,7 +529,7 @@ class _BusinessInfoFormState extends State<BusinessInfoForm> with TickerProvider
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            _isMapMoving ? 'UPDATING LOCATION...' : 'SELECTED LOCATION',
+                                            _isMapMoving ? 'business_info.updating_location'.tr() : 'business_info.selected_location'.tr(),
                                             style: const TextStyle(
                                               color: Colors.white,
                                               fontWeight: FontWeight.w700,
@@ -538,7 +539,7 @@ class _BusinessInfoFormState extends State<BusinessInfoForm> with TickerProvider
                                           ),
                                           const SizedBox(height: 4),
                                           Text(
-                                            'Lat: ${_currentLocation!.latitude.toStringAsFixed(6)}  Lng: ${_currentLocation!.longitude.toStringAsFixed(6)}',
+'${'business_info.latitude'.tr()}: ${_currentLocation!.latitude.toStringAsFixed(6)}  ${'business_info.longitude'.tr()}: ${_currentLocation!.longitude.toStringAsFixed(6)}',
                                             style: const TextStyle(
                                               fontSize: 13,
                                               color: Colors.white,
@@ -575,11 +576,11 @@ class _BusinessInfoFormState extends State<BusinessInfoForm> with TickerProvider
                                               Row(
                                                 children: [
                                                   if (_daira.isNotEmpty) ...[
-                                                    _buildAddressChip('Daira: $_daira'),
+                                                    _buildAddressChip('${'business_info.daira'.tr()}: $_daira'),
                                                     const SizedBox(width: 4),
                                                   ],
                                                   if (_wilaya.isNotEmpty)
-                                                    _buildAddressChip('Wilaya: $_wilaya'),
+                                                    _buildAddressChip('${'business_info.wilaya'.tr()}: $_wilaya'),
                                                 ],
                                               ),
                                             ],
@@ -616,7 +617,7 @@ class _BusinessInfoFormState extends State<BusinessInfoForm> with TickerProvider
                                                 valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
                                               ),
                                             )
-                                          : const Icon(Icons.my_location, color: Colors.blue, size: 20, key: ValueKey('location_icon')),
+                                          : Icon(Icons.my_location, color: Colors.blue, size: 20, key: const ValueKey('location_icon'), semanticLabel: 'business_info.current_location'.tr()),
                                     ),
                                   ),
                                   const SizedBox(height: 8),
@@ -633,7 +634,7 @@ class _BusinessInfoFormState extends State<BusinessInfoForm> with TickerProvider
                                       );
                                     },
                                     backgroundColor: Colors.white,
-                                    child: const Icon(Icons.add, color: Colors.blue, size: 20),
+                                    child: Icon(Icons.add, color: Colors.blue, size: 20, semanticLabel: 'business_info.zoom_in'.tr()),
                                   ),
                                   const SizedBox(height: 4),
                                   // Zoom out button
@@ -649,7 +650,7 @@ class _BusinessInfoFormState extends State<BusinessInfoForm> with TickerProvider
                                       );
                                     },
                                     backgroundColor: Colors.white,
-                                    child: const Icon(Icons.remove, color: Colors.blue, size: 20),
+                                    child: Icon(Icons.remove, color: Colors.blue, size: 20, semanticLabel: 'business_info.zoom_out'.tr()),
                                   ),
                                 ],
                               ),
@@ -690,9 +691,9 @@ class _BusinessInfoFormState extends State<BusinessInfoForm> with TickerProvider
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                child: const Text(
-                  'Continue',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                child: Text(
+                  'business_info.continue'.tr(),
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                 ),
               ),
             ),

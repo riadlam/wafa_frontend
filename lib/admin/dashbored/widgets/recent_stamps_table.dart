@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:loyaltyapp/models/stamp_activation_model.dart';
 import 'package:loyaltyapp/services/stamp_service.dart';
 import 'package:loyaltyapp/scalaton_loader/recent_stamps_skeleton.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class RecentStampsTable extends StatefulWidget {
   final Color primaryColor;
@@ -59,8 +60,8 @@ class _RecentStampsTableState extends State<RecentStampsTable> {
             ],
           );
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(
-            child: Text('No recent stamp activity found'),
+          return Center(
+            child: Text('recent_stamps.no_activity'.tr()),
           );
         }
 
@@ -77,7 +78,7 @@ class _RecentStampsTableState extends State<RecentStampsTable> {
                   Expanded(
                     flex: 3,
                     child: Text(
-                      'CUSTOMER',
+                      'recent_stamps.customer'.tr(),
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
@@ -89,7 +90,7 @@ class _RecentStampsTableState extends State<RecentStampsTable> {
                   Expanded(
                     flex: 2,
                     child: Text(
-                      'STAMPS',
+                      'recent_stamps.stamps'.tr(),
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
@@ -102,7 +103,7 @@ class _RecentStampsTableState extends State<RecentStampsTable> {
                   Expanded(
                     flex: 2,
                     child: Text(
-                      'TIME',
+                      'recent_stamps.time'.tr(),
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
@@ -126,45 +127,51 @@ class _RecentStampsTableState extends State<RecentStampsTable> {
 
   Widget _buildTableRow(StampActivation activation) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12.0),
-      child: Row(
-        children: [
-          // Customer Column
-          Expanded(
-            flex: 3,
-            child: Row(
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: widget.primaryColor.withOpacity(0.1),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.person_outline,
-                    color: widget.primaryColor,
-                    size: 20,
-                  ),
+      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Customer Column
+              Expanded(
+                flex: 4,
+                child: Row(
+                  children: [
+                    Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: widget.primaryColor.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.person_outline,
+                        color: widget.primaryColor,
+                        size: 18,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: Text(
+                        _truncateName(activation.username),
+                        style: GoogleFonts.inter(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: widget.darkTextColor,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 12),
-                Text(
-                  _truncateName(activation.username),
-                  style: GoogleFonts.inter(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: widget.darkTextColor,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // Stamps Column
-          Expanded(
-            flex: 2,
-            child: Center(
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              ),
+              const SizedBox(width: 8),
+              // Stamps Column
+              Container(
+                width: 80,
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   color: widget.primaryColor.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
@@ -172,27 +179,31 @@ class _RecentStampsTableState extends State<RecentStampsTable> {
                 child: Text(
                   '${activation.activeStamps}/${activation.totalStamps}',
                   style: GoogleFonts.inter(
-                    fontSize: 13,
+                    fontSize: 12,
                     fontWeight: FontWeight.w600,
                     color: widget.primaryColor,
                   ),
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
-            ),
-          ),
-          // Time Column
-          Expanded(
-            flex: 2,
-            child: Text(
-              activation.timeAgo,
-              style: GoogleFonts.inter(
-                fontSize: 13,
-                color: widget.lightTextColor,
+              const SizedBox(width: 8),
+              // Time Column
+              Container(
+                width: 70,
+                child: Text(
+                  activation.timeAgo,
+                  style: GoogleFonts.inter(
+                    fontSize: 12,
+                    color: widget.lightTextColor,
+                  ),
+                  textAlign: TextAlign.right,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
-              textAlign: TextAlign.right,
-            ),
-          ),
-        ],
+            ],
+          );
+        },
       ),
     );
   }
